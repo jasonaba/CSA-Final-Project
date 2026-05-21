@@ -1,16 +1,19 @@
 package game;
 
-public class Wall implements Tile {
+public class Lava implements Tile{
 	private int x, y, width, height;
-
+	private String color;
+	
 	//Constructor
-	public Wall(int x, int y, int width, int height) {
+	public Lava(int x, int y, int width, int height, String color) {
+		super();
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.color = color;
 	}
-
+	
 	//Getters
 	@Override
 	public int getX() {
@@ -37,18 +40,21 @@ public class Wall implements Tile {
 	}
 
 	//Methods
-	
 	@Override
-	/**
-	 * Checks if the wall is colliding with the character using Axis-Aligned Bounding Box Collisions
-	 */
 	public boolean isColliding(Character c) {
 		// TODO Auto-generated method stub
-		
 		return c.getX() + c.getWidth()>=this.getX() /*Char right further right than Wall left*/ && 
 				c.getX() <= this.getX() + this.getWidth() /*Char left further left than Wall right*/ &&
 				c.getY()+c.getHeight() >= this.getY() /*Char Bottom further down than Wall Top */ &&
-				c.getY() <= this.getY() + this.getHeight() /* Char top further up than Wall Bottom*/;
+				c.getY() <= this.getY() + this.getHeight();
 	}
 
+	public boolean kills(Character c) {
+		if(isColliding(c)) {
+			if(!c.getColor().equals(this.color))
+				return true;
+		}
+		return false;
+	}
+	
 }

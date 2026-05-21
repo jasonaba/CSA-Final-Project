@@ -35,6 +35,9 @@ public class Character {
 	public int getHeight() {
 		return height;
 	}
+	public String getColor() {
+		return color;
+	}
 	
 	//Methods
 	
