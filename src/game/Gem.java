@@ -1,5 +1,8 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Gem implements Tile{
 	private int x, y, width, height;
 	private String color;
@@ -53,6 +56,17 @@ public class Gem implements Tile{
 	
 	public boolean tryCollect(Character c) {
 			return isColliding(c) && c.getColor().equals(this.color);
+	}
+
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		if(color.equals("Red"))
+			g.setColor(Color.red);
+		else if(color.equals("Blue"))
+			g.setColor(Color.blue);
+		
+		g.fillRect(x, y, width, height);
 	}
 	
 }

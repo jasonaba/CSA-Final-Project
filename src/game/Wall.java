@@ -1,5 +1,8 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Wall implements Tile {
 	private int x, y, width, height;
 
@@ -49,6 +52,13 @@ public class Wall implements Tile {
 				c.getX() <= this.getX() + this.getWidth() /*Char left further left than Wall right*/ &&
 				c.getY()+c.getHeight() >= this.getY() /*Char Bottom further down than Wall Top */ &&
 				c.getY() <= this.getY() + this.getHeight() /* Char top further up than Wall Bottom*/;
+	}
+
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		g.setColor(Color.gray);
+		g.fillRect(x, y, width, height);
 	}
 
 }

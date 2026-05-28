@@ -1,5 +1,8 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Lever implements Tile, Switchable {
 	private int x, y, width, height;
 	private boolean isOn;//if switched on
@@ -59,6 +62,13 @@ public class Lever implements Tile, Switchable {
 	public int getHeight() {
 		// TODO Auto-generated method stub
 		return height;
+	}
+
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		g.setColor(Color.pink);
+		g.fillRect(x, y, width, height);
 	}
 
 }

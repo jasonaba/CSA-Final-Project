@@ -1,5 +1,8 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Door implements Tile{
 	private int x, y, width, height;
 	private boolean isOpen;
@@ -61,5 +64,15 @@ public class Door implements Tile{
 
 	public void open() {
 		isOpen = true;
+	}
+
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		if(color.equals("Red"))
+			g.setColor(Color.RED);
+		else if(color.equals("Blue"))
+			g.setColor(Color.blue);
+		g.drawRect(x, y, width, height);
 	}
 }

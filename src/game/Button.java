@@ -1,5 +1,8 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Button implements Tile, Switchable{
 	private int x, y, width, height;
 	private boolean isOn;
@@ -57,6 +60,13 @@ public class Button implements Tile, Switchable{
 	public int getHeight() {
 		// TODO Auto-generated method stub
 		return height;
+	}
+
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		g.setColor(Color.orange);
+		g.fillRect(x, y, width, height);
 	}
 	
 }

@@ -1,5 +1,8 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Lava implements Tile{
 	private int x, y, width, height;
 	private String color;
@@ -55,6 +58,16 @@ public class Lava implements Tile{
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		if(color.equals("Red"))
+			g.setColor(Color.red);
+		if(color.equals("Blue"))
+			g.setColor(Color.blue);
+		g.fillRect(x, y, width, height);
 	}
 	
 }

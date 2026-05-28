@@ -14,6 +14,12 @@ public class Level {
 		initializeLevels();
 	}
 	
+	//Getters & Setters
+	public ArrayList<Tile> getActiveTiles(){
+		return activeTiles;
+	}
+	
+	//Methods
 	private void initializeLevels() {
 		//each level is 15 rows by 20 columns
 		char[][] level1 = {
@@ -50,18 +56,51 @@ public class Level {
 		
 		
 	}
+	
+	/**
+	 * Loads the level at the current index to be drawn on the screen
+	 */
 	public void loadCurrentLevel() {
 		activeTiles.clear();
 		char[][] map = blueprints.get(currentLevelIndex);
 		
 		for(int row = 0; row<map.length; row++) {
 			for(int col = 0; col<map[row].length; col++) {
-				
 				char symbol = map[row][col];
+				//x & y values for each tile
+				int xPixel = col * 40;
+				int yPixel = row * 40;
 				
+				if(symbol=='W') {
+					activeTiles.add(new Wall(xPixel, yPixel, 40, 40));
+				}
+				else if(symbol=='R') {
+					activeTiles.add(new Gem(xPixel, yPixel, 40, 40, "Red"));
+				}
+				else if(symbol=='B') {
+					activeTiles.add(new Gem(xPixel, yPixel, 40, 40, "Blue"));
+				}
+				else if(symbol=='D') {
+					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Red"));
+				}
+				else if(symbol=='E') {
+					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Blue"));
+				}
+				else if(symbol=='X') {
+					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Red"));
+				}
+				else if(symbol=='Y') {
+					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Blue"));
+				}
+				else if (symbol == 'O') {
+	                activeTiles.add(new Button(xPixel, yPixel, 40, 40));
+				}
+	            else if (symbol == 'L') {
+	                activeTiles.add(new Lever(xPixel, yPixel, 40, 40, false));
+	            }
 			}
 		}
-		
+		System.out.println("Level loaded! Active tiles: " + activeTiles.size() );
 		
 	}
 }
