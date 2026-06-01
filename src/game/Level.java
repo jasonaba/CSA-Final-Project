@@ -6,6 +6,7 @@ public class Level {
 	private ArrayList<char[][]> blueprints;
 	private int currentLevelIndex;
 	private ArrayList<Tile> activeTiles;
+	private Character player1, player2;
 	
 	public Level() {
 		blueprints = new ArrayList<>();
@@ -18,6 +19,8 @@ public class Level {
 	public ArrayList<Tile> getActiveTiles(){
 		return activeTiles;
 	}
+	public Character getPlayer1() { return player1;}
+	public Character getPlayer2() { return player2;}
 	
 	//Methods
 	private void initializeLevels() {
@@ -97,6 +100,12 @@ public class Level {
 				}
 	            else if (symbol == 'L') {
 	                activeTiles.add(new Lever(xPixel, yPixel, 40, 40, false));
+	            }
+	            else if(symbol == 'F') {
+	            	player1 = new Character(xPixel, yPixel, 30, 30, "Red", true);
+	            }
+	            else if(symbol == 'M') {
+	            	player2 = new Character(xPixel, yPixel, 30, 30, "Blue", false);
 	            }
 			}
 		}

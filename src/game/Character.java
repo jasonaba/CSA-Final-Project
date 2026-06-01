@@ -1,12 +1,20 @@
 package game;
+import java.awt.Image;
+import java.awt.Graphics;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class Character {
 	//Variables
-	private int x, y, xVel, yVel, width, height;
+	private int x, y, xVel, yVel, width, height, gravity;
 	private String color;
 	private boolean 
 	isPlayerOne, /*so it can know whether to use WASD or arrow keys if two player*/
 	isOnFloor;//to check if jumping is possible
+	private Image sprite;
 	
 	//Constructors
 	public Character(int x, int y, int width, int height, String color, boolean isPlayerOne) {
@@ -19,6 +27,18 @@ public class Character {
 		this.color = color;
 		this.isPlayerOne = isPlayerOne;
 		isOnFloor = false;
+		gravity = 1;
+		try {
+			if(isPlayerOne) {
+				sprite = ImageIO.read(new File("images/player1.png"));
+			}
+			else {
+				sprite = ImageIO.read(new File("images/player2.png"));
+			}
+		} catch(IOException e) {
+			System.out.println("Unable to load character image");
+			e.printStackTrace();
+		}
 	}
 	
 	//Getters and Setters
@@ -38,6 +58,12 @@ public class Character {
 	public String getColor() {
 		return color;
 	}
+	public void setYVel(int yVel) {
+		this.yVel = yVel;
+	}
+	public void setXVel(int xVel) {
+		this.xVel = xVel;
+	}
 	
 	//Methods
 	
@@ -46,7 +72,7 @@ public class Character {
 	 */
 	public void update() {
 		//To implement gravity and movement when necessary
-		yVel++;
+		yVel+= gravity;
 		x = x + xVel;
 		y = y + yVel;
 		
@@ -57,6 +83,21 @@ public class Character {
 			isOnFloor = true;
 		}
 	}
+	
+	public void draw(Graphics g) {
+		if(sprite!= null) {
+			g.drawImage(sprite, x, y, width, height, null);
+		}else {
+			//just in case image is missing
+		if("Red".equals(color)) 
+			g.setColor(Color.RED);
+		
+		else if("Blue".equals(color))
+			g.setColor(Color.blue);
+		g.fillRect(x, y, width, height);
+		}
+	}
+	
 	
 	/**
 	 * When the specific button is pressed, move the character right
