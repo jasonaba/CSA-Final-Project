@@ -2,12 +2,13 @@ package game;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
-public class Lava implements Tile{
+public class Lava implements Tile {
 	private int x, y, width, height;
 	private String color;
-	
-	//Constructor
+
+	// Constructor
 	public Lava(int x, int y, int width, int height, String color) {
 		super();
 		this.x = x;
@@ -16,45 +17,41 @@ public class Lava implements Tile{
 		this.height = height;
 		this.color = color;
 	}
-	
-	//Getters
+
+	// Getters
 	@Override
 	public int getX() {
-		// TODO Auto-generated method stub
 		return x;
 	}
 
 	@Override
 	public int getY() {
-		// TODO Auto-generated method stub
 		return y;
 	}
 
 	@Override
 	public int getWidth() {
-		// TODO Auto-generated method stub
 		return width;
 	}
 
 	@Override
 	public int getHeight() {
-		// TODO Auto-generated method stub
 		return height;
 	}
 
-	//Methods
+	// Methods
 	@Override
 	public boolean isColliding(Character c) {
-		// TODO Auto-generated method stub
-		return c.getX() + c.getWidth()>=this.getX() /*Char right further right than Wall left*/ && 
-				c.getX() <= this.getX() + this.getWidth() /*Char left further left than Wall right*/ &&
-				c.getY()+c.getHeight() >= this.getY() /*Char Bottom further down than Wall Top */ &&
-				c.getY() <= this.getY() + this.getHeight();
+		return c.getX() + c.getWidth() >= this.getX()
+				/* Char right further right than Wall left */ && c.getX() <= this.getX()
+						+ this.getWidth() /* Char left further left than Wall right */
+				&& c.getY() + c.getHeight() >= this.getY() /* Char Bottom further down than Wall Top */
+				&& c.getY() <= this.getY() + this.getHeight();
 	}
 
 	public boolean kills(Character c) {
-		if(isColliding(c)) {
-			if(!c.getColor().equals(this.color))
+		if (isColliding(c)) {
+			if (!c.getColor().equals(this.color))
 				return true;
 		}
 		return false;
@@ -62,12 +59,16 @@ public class Lava implements Tile{
 
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
-		if(color.equals("Red"))
+		if (color.equals("Red"))
 			g.setColor(Color.red);
-		if(color.equals("Blue"))
+		if (color.equals("Blue"))
 			g.setColor(Color.blue);
 		g.fillRect(x, y, width, height);
 	}
-	
+
+	@Override
+	public Rectangle getBounds() {
+		return new Rectangle(x, y, width, height);
+	}
+
 }
