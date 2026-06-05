@@ -182,57 +182,174 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				}
 			}
 		}
-		// update the characters' positions
-		if (p1 != null)
-			p1.update();
-		if (p2 != null)
-			p2.update();
+		;
 
 		// check every tile to see if character is colliding with them
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
 
-		for (Tile t : tiles) {
-			// We only want to push back against walls right now
-			if (t instanceof Wall) {
-				// Player 1 Wall Collisions
-				if (p1 != null && t.isColliding(p1))
-					resolveWallCollision(p1, t);
+		// update the characters' positions
 
-				// Player 2 Wall Collisions
-				if (p2 != null && t.isColliding(p2))
-					resolveWallCollision(p2, t);
+		// Player 1 Wall Collisions
+		if (p1 != null) {
+			p1.updateX();// move horizontally
+
+			for (Tile t : tiles) {// check collisions
+				if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
+					if (p1 != null && t.isColliding(p1))
+						resolveHorizontalCollision(p1, t);
+				}
+			}
+		}
+		if (p1 != null) {
+			p1.updateY();// move vertically
+			for (Tile t : tiles) {// check collisions
+				if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
+					if (p1 != null && t.isColliding(p1))
+						resolveVerticalCollision(p1, t);
+				}
 			}
 		}
 
+		// Player 2 Wall Collisions
+		if (p2 != null) {
+			p2.updateX();// move horizontally
+
+			for (Tile t : tiles) {// check collisions
+				if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
+					if (t.isColliding(p2))
+						resolveHorizontalCollision(p2, t);
+				}
+			}
+			if (p2 != null)
+				p2.updateY();// move vertically
+			for (Tile t : tiles) {// check wall collisions
+				if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
+					if (p2 != null && t.isColliding(p2))
+						resolveVerticalCollision(p2, t);
+				}
+			}
+		}
+
+		// Button, Gem, and Lava collisions
+
+		// Reset all buttons at the start of the frame processing
+		for (Tile t : tiles) {
+			if (t instanceof Button) {
+				((Button) t).release();
+			}
+		}
+
+		// Player 1 Gem Collisions
+		for (int i = tiles.size() - 1; i >= 0; i--) {
+			Tile t = tiles.get(i);
+
+			if (p1 != null && t instanceof Gem && t.isColliding(p1)) {
+				Gem g = (Gem) t;
+				if ("Red".equals(g.getColor())) {
+					// Collect the gem
+					tiles.remove(i);
+					System.out.println("Player 1 collected a red gem");
+				}
+			}
+
+			// Player 1 Lava Collisions
+
+			if (p1 != null && t instanceof Lava && t.isColliding(p1)) {
+				Lava l = (Lava) t;
+				if ("Blue".equals(l.getColor())) {
+					// kill player 1
+					System.out.println("Player1 jumped into lava");
+					resetLevel();
+					return;// to stop processing the frame and restart
+				}
+			}
+
+			// Player 1 Button Collisions
+			if (t instanceof Button) {
+				Button b = (Button) t;
+				if ((p1 != null && b.isColliding(p1)) || (p2 != null && b.isColliding(p2))) {
+					b.interact();
+				}
+			}
+
+			// Player 2 Gem Collisions
+
+			if (p2 != null && t instanceof Gem && t.isColliding(p2)) {
+				Gem g = (Gem) t;
+				if ("Blue".equals(g.getColor())) {
+					// Collect the gem
+					tiles.remove(i);
+					System.out.println("Player 2 collected a blue gem");
+				}
+			}
+
+			// Player 2 Lava Collisions
+
+			if (p2 != null && t instanceof Lava && t.isColliding(p2)) {
+				Lava l = (Lava) t;
+				if ("Red".equals(l.getColor())) {
+					// kill player 1
+					System.out.println("Player2 jumped into lava");
+					resetLevel();
+					return;// to stop processing the frame and restart
+				}
+			}
+
+		}
+
 		repaint();
+
 	}
 
-	private void resolveWallCollision(Character p, Tile t) {
+	private void resolveHorizontalCollision(Character p, Tile t) {
 		// get the hitboxes of the character and tile
 		java.awt.Rectangle pBounds = p.getBounds();
 		java.awt.Rectangle tBounds = t.getBounds();
 
 		// Find the rectangle of the overlap zone
 		java.awt.Rectangle intersection = pBounds.intersection(tBounds);
+
+		if (intersection.width <= 0 || intersection.height <= 0)// make sure it isn't just touching without overlapping
+			return;
+
 		// if the character intersected the tile on it's left/right side
-		if (intersection.width < intersection.height) {// intersection is skinnier than tall
-			if (p.getBounds().x < tBounds.x) {// if character is on the left
-				p.setX(p.getX() - intersection.width);// we push them to the tile's left edge
-			} else {// if character is on right
-				p.setX(p.getX() + intersection.width);// we push them to the tile's right edge
-			}
-		} else {// if the character intersected the tile on it's top/bottom side (wider than
-				// tall)
-			if (pBounds.y < tBounds.y) {// if character is above tile
-				p.setY(p.getY() - intersection.height);// we push the character back up
-				p.setYVel(0);// so they stop moving vertically
-				p.setIsOnFloor(true);// so they don't fall through the floor
-			} else {// if the character is under tile
-				p.setY(p.getY() + intersection.height);// we push them to tile's bottom edge
-				p.setYVel(0);// make them stop moving up
-				// they aren't on the ground, so isOnFloor stays false
-			}
+		if (p.getBounds().x < tBounds.x) {// if character is on the left
+			p.setX(p.getX() - intersection.width);// we push them to the tile's left edge
+		} else {// if character is on right
+			p.setX(p.getX() + intersection.width);// we push them to the tile's right edge
 		}
+		p.stop();
+	}
+
+	private void resolveVerticalCollision(Character p, Tile t) {
+		// get the hitboxes of the character and tile
+		java.awt.Rectangle pBounds = p.getBounds();
+		java.awt.Rectangle tBounds = t.getBounds();
+
+		// Find the rectangle of the overlap zone
+		java.awt.Rectangle intersection = pBounds.intersection(tBounds);
+
+		if (intersection.width <= 0 || intersection.height <= 0)// make sure it isn't just touching without overlapping
+			return;
+
+		if (pBounds.y < tBounds.y) {// if character is above tile
+			p.setY(p.getY() - intersection.height);// we push the character back up
+			p.setYVel(0);// so they stop moving vertically
+			p.setIsOnFloor(true);// so they don't fall through the floor
+		} else {// if the character is under tile
+			p.setY(p.getY() + intersection.height);// we push them to tile's bottom edge
+			p.setYVel(0);// make them stop moving up
+			// they aren't on the ground, so isOnFloor stays false
+		}
+	}
+
+	private void resetLevel() {
+		System.out.println("You died... Try again!");
+		levelManager.loadCurrentLevel();
+
+		// Reset key presses so characters spawn standing still
+		leftPressed = false;
+		rightPressed = false;
 	}
 
 }

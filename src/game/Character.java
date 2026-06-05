@@ -92,20 +92,25 @@ public class Character {
 		this.isOnFloor = b;
 	}
 
-	// Methods
-
+	//Methods
+	
 	/**
-	 * update the game every frame
+	 * Moves Character horizontally
 	 */
-	public void update() {
-		// To implement gravity and movement when necessary
-		yVel += gravity;
+	public void updateX() {
 		x = x + xVel;
+	}
+	
+	/**
+	 * Moves the character vertically and applies gravity
+	 */
+	public void updateY() {
+		yVel += gravity; //to implement gravity
 		y = y + yVel;
-
 		isOnFloor = false;// Tiles will set this to true
 	}
-
+	
+	
 	public void draw(Graphics g) {
 		if (sprite != null) {
 			g.drawImage(sprite, x, y, width, height, null);

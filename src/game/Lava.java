@@ -38,6 +38,10 @@ public class Lava implements Tile {
 	public int getHeight() {
 		return height;
 	}
+	
+	public String getColor() {
+		return color;
+	}
 
 	// Methods
 	@Override
