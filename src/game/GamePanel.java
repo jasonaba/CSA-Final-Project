@@ -15,10 +15,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	private Level levelManager;// controls everything to do with the levels
 	private Timer gameClock;// for the loop
 	private boolean isSinglePlayer, controllingPlayerOne, leftPressed, rightPressed;
-
+	
 	public GamePanel() {
+		Wall.loadImages();
+		Button.loadImages();
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
-		this.setBackground(Color.black);
+		this.setBackground(Color.white);
 
 		this.isSinglePlayer = true;
 		controllingPlayerOne = true;// tracks in one-player mode what character is being controlled
@@ -239,6 +241,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 		}
 
+		//Run interaction loop to look at all tiles
 		// Player 1 Gem Collisions
 		for (int i = tiles.size() - 1; i >= 0; i--) {
 			Tile t = tiles.get(i);

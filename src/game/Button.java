@@ -2,12 +2,19 @@ package game;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class Button implements Tile, Switchable {
 	private int x, y, width, height;
 	private boolean isOn;
-
+//Animation Variable
+	private static Image[] buttonFrames;
+	
 	// Constructor
 	public Button(int x, int y, int width, int height) {
 		this.x = x;
@@ -62,15 +69,45 @@ public class Button implements Tile, Switchable {
 		return height;
 	}
 
+	//Methods
+	
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(Color.orange);
-		g.fillRect(x, y, width, height);
+		if(buttonFrames != null && buttonFrames[0] != null && buttonFrames[1] !=null) {
+			if(isOn) {
+				g.drawImage(buttonFrames[1], x, y, width, height, null);
+			}else {
+				g.drawImage(buttonFrames[0], x, y, width, height, null);
+			}
+		}else {
+			if(!isOn) {
+				g.setColor(Color.orange);
+			}else {
+				g.setColor(Color.green);
+			}
+				g.fillRect(x, y, width, height);
+			}
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
 	}
-
+	
+	public static void loadImages() {
+		try {
+			buttonFrames = new Image[2]; // Index 0 is Off, Index 1 is On
+			
+			// Reads the sheet as a BufferedImage to unlock .getSubimage()
+			BufferedImage sheet = ImageIO.read(new File("images/BSutton.png"));
+			
+			// Slicing vertically: (x, y, width, height)
+			buttonFrames[0] = sheet.getSubimage(0, 0, 40, 40);  // Top frame (Off)
+			buttonFrames[1] = sheet.getSubimage(0, 40, 40, 40); // Bottom frame (On)
+			
+			System.out.println("Button images sliced successfully!");
+		} catch (IOException e) {
+			System.out.println("Error: Could not load images/button.png. Using backup colors.");
+		}
+	}
 }

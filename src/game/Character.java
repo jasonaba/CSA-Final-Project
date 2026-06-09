@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
 public class Character {
 	// Variables
@@ -15,7 +16,10 @@ public class Character {
 	private String color;
 	private boolean isPlayerOne, /* so it can know whether to use WASD or arrow keys if two player */
 			isOnFloor;// to check if jumping is possible
-	private Image sprite;
+	// Animation variables
+	private Image[] frames;
+	private int animationCounter;
+	private boolean facingRight;
 
 	// Constructors
 	public Character(int x, int y, int width, int height, String color, boolean isPlayerOne) {
@@ -29,12 +33,29 @@ public class Character {
 		this.isPlayerOne = isPlayerOne;
 		isOnFloor = false;
 		gravity = 1;
+
+		this.frames = new Image[4];
+		this.animationCounter = 0;
+		this.facingRight = true;
+		loadSpritesheet();
+	}
+
+	private void loadSpritesheet() {
+		String filename = "";
 		try {
 			if (isPlayerOne) {
-				sprite = ImageIO.read(new File("images/player1.png"));
+				filename = "images/player1.png";
 			} else {
-				sprite = ImageIO.read(new File("images/player2.png"));
+				filename = "images/player2.png";
 			}
+			//So we can use Subimage
+			BufferedImage sheet = ImageIO.read(new File(filename));
+
+			// AP CSA: Slicing the 2x2 array out using 32x32 bounding boxes
+			frames[0] = sheet.getSubimage(0, 0, 32, 32); // Top Left (Idle)
+			frames[1] = sheet.getSubimage(32, 0, 32, 32); // Top Right (Walk 1)
+			frames[2] = sheet.getSubimage(0, 32, 32, 32); // Bottom Left (Walk 2)
+			frames[3] = sheet.getSubimage(32, 32, 32, 32); // Bottom Right (Jump)
 		} catch (IOException e) {
 			System.out.println("Unable to load character image");
 			e.printStackTrace();
@@ -92,28 +113,54 @@ public class Character {
 		this.isOnFloor = b;
 	}
 
-	//Methods
-	
+	// Methods
+
 	/**
 	 * Moves Character horizontally
 	 */
 	public void updateX() {
 		x = x + xVel;
+		
+		//Change Direction of sprite
+		if(xVel > 0) {
+			facingRight = true;
+		}
+		else if (xVel < 0 ) {
+			facingRight = false;
+		}
 	}
-	
+
 	/**
 	 * Moves the character vertically and applies gravity
 	 */
 	public void updateY() {
-		yVel += gravity; //to implement gravity
+		yVel += gravity; // to implement gravity
 		y = y + yVel;
 		isOnFloor = false;// Tiles will set this to true
 	}
-	
-	
+
 	public void draw(Graphics g) {
-		if (sprite != null) {
-			g.drawImage(sprite, x, y, width, height, null);
+		//Increase the counter every frame so it animates it
+		animationCounter++;
+		//Choose the right frame to draw
+		Image activeFrame = frames[0];
+		
+		if(!isOnFloor){//if falling/not on ground
+			activeFrame = frames[2];
+		}else if (xVel != 0) {//if moving on the ground
+			if((animationCounter/10)%2 == 0) {
+				activeFrame = frames[1];
+			}else {
+				activeFrame = frames[2];
+			}
+		}
+		
+		if(activeFrame != null){
+			if(facingRight) {
+				g.drawImage(activeFrame, x, y, width, height, null);
+			}else {//negative width to flip it around
+				g.drawImage(activeFrame, x+width, y, -width, height, null);
+		}
 		} else {
 			// just in case image is missing
 			if ("Red".equals(color))
