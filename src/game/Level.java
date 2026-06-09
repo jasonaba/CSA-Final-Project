@@ -33,7 +33,7 @@ public class Level {
 			    {'W',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','W'},
 			    {'W',' ',' ','W','W','W','W','W','X','X','Y','Y','W','W','W','W',' ',' ',' ','W'},
 			    {'W','R',' ','W',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','W',' ','B',' ','W'},
-			    {'W','W','W','W',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','W','W','W','W','W'},
+			    {'W','W','W','W',' ',' ',' ',' ',' ',' ',' ','L',' ',' ',' ','W','W','W','W','W'},
 			    {'W',' ',' ',' ',' ',' ','W','W','W','O','W','W','W',' ',' ',' ',' ',' ',' ','W'},
 			    {'W',' ',' ',' ',' ',' ','W',' ',' ',' ',' ',' ','W',' ',' ',' ',' ',' ',' ','W'},
 			    {'W','W','W','W','E','W','W','W','W','W','W','W','W','W','D','W','W','W','W','W'},
@@ -117,7 +117,7 @@ public class Level {
 	                activeTiles.add(new Button(xPixel, yPixel, 40, 40));
 				}
 	            else if (symbol == 'L') {
-	                activeTiles.add(new Lever(xPixel, yPixel, 40, 40, false));
+	                activeTiles.add(new Lever(xPixel, yPixel, 40, 40));
 	            }
 	            else if(symbol == '1') {
 	            	player1 = new Character(xPixel, yPixel, 30, 30, "Red", true);

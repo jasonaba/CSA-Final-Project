@@ -3,18 +3,24 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class Lever implements Tile, Switchable {
 	private int x, y, width, height;
-	private boolean isOn;// if switched on
+	private boolean isOn, /* if switched on */ wasCollidingLastFrame;
+	private static Image leverSprite;
 
 	// Constructor
-	public Lever(int x, int y, int width, int height, boolean isOn) {
+	public Lever(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.isOn = isOn;// based on the level, the interactable object will start on or off
+		this.isOn = false;// starts off always
+		this.wasCollidingLastFrame = false;
 	}
 
 	// Methods
@@ -30,11 +36,38 @@ public class Lever implements Tile, Switchable {
 
 	@Override
 	public boolean isColliding(Character c) {
-		return c.getX() + c.getWidth() >= this.getX()
-				/* Char right further right than Wall left */ && c.getX() <= this.getX()
-						+ this.getWidth() /* Char left further left than Wall right */
+		return c.getX() + c.getWidth() >= this.getX()/* Char right further right than Wall left */ && c
+				.getX() <= this.getX() + this.getWidth() /* Char left further left than Wall right */
 				&& c.getY() + c.getHeight() >= this.getY() /* Char Bottom further down than Wall Top */
 				&& c.getY() <= this.getY() + this.getHeight();
+	}
+
+	public static void loadImages() {
+		try {
+			leverSprite = ImageIO.read(new File("images/Lever.png"));
+			System.out.println("Lever image loaded successfully!");
+		} catch (IOException e) {
+			System.out.println("Couldn't load Lever image");
+		}
+	}
+
+	/**
+	 * Checks if the character just interacted with the lever and updates the
+	 * wasCollidingLastFrame variable
+	 * 
+	 * @param p1 Character 1
+	 * @param p2 Character 2
+	 */
+	public void update(Character p1, Character p2) {
+		boolean isCurrentlyColliding = isColliding(p1) || isColliding(p2);
+
+		// Trigger interact() ONLY when a player first steps into the lever's hitbox
+		if (isCurrentlyColliding && !wasCollidingLastFrame) {
+			interact();
+		}
+
+		// Update tracking for the next frame
+		wasCollidingLastFrame = isCurrentlyColliding;
 	}
 
 	// Getters
@@ -60,8 +93,22 @@ public class Lever implements Tile, Switchable {
 
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(Color.pink);
-		g.fillRect(x, y, width, height);
+		if (leverSprite != null) {
+			if (!isOn) {
+				// State 1: Off - Draw the lever facing its normal direction
+				g.drawImage(leverSprite, x, y, width, height, null);
+			} else {
+				// State 2: On - Mirror trick: Flip it horizontally so it faces the other way!
+				g.drawImage(leverSprite, x + width, y, -width, height, null);
+			}
+		} else {
+			if (!isOn) {
+				g.setColor(Color.pink);
+			} else {
+				g.setColor(Color.green);
+			}
+			g.fillRect(x, y, width, height);
+		}
 	}
 
 	@Override

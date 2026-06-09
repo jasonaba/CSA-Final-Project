@@ -19,6 +19,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public GamePanel() {
 		Wall.loadImages();
 		Button.loadImages();
+		Lever.loadImages();
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
 		this.setBackground(Color.white);
 
