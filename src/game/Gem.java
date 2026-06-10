@@ -45,11 +45,7 @@ public class Gem implements Tile {
 	// Methods
 	@Override
 	public boolean isColliding(Character c) {
-		return c.getX() + c.getWidth() >= this.getX()
-				/* Char right further right than Wall left */ && c.getX() <= this.getX()
-						+ this.getWidth() /* Char left further left than Wall right */
-				&& c.getY() + c.getHeight() >= this.getY() /* Char Bottom further down than Wall Top */
-				&& c.getY() <= this.getY() + this.getHeight();
+		return this.getBounds().intersects(c.getBounds());
 	}
 
 	public boolean tryCollect(Character c) {

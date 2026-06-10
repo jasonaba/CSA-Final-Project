@@ -176,14 +176,14 @@ public class Character {
 	 * When the specific button is pressed, move the character right
 	 */
 	public void moveRight() {
-		xVel = 5;
+		xVel = 3;
 	}
 
 	/**
 	 * When the specific button is pressed, move the character left
 	 */
 	public void moveLeft() {
-		xVel = -5;
+		xVel = -3;
 	}
 
 	/**

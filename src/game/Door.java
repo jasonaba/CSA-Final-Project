@@ -24,7 +24,7 @@ public class Door implements Tile {
 		isOpen = false;
 
 	}
-
+	
 	// Getters
 	@Override
 	public int getX() {
@@ -72,10 +72,7 @@ public class Door implements Tile {
 
 	@Override
 	public boolean isColliding(Character c) {
-		return c.getX() + c.getWidth() >= this.getX()/* Char right further right than Wall left */ && c
-				.getX() <= this.getX() + this.getWidth() /* Char left further left than Wall right */
-				&& c.getY() + c.getHeight() >= this.getY() /* Char Bottom further down than Wall Top */
-				&& c.getY() <= this.getY() + this.getHeight();
+		return this.getBounds().intersects(c.getBounds());
 	}
 
 	public void open() {
@@ -86,6 +83,7 @@ public class Door implements Tile {
 	public void draw(Graphics g) {
 		Image currentSprite = null;
 		if (darkClosed != null && darkOpened != null && lightClosed != null && lightOpened != null) {
+
 			if ("Dark".equals(color)) {
 				if (isOpen) {
 					currentSprite = darkOpened;

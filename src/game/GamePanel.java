@@ -172,9 +172,35 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		Character p1 = levelManager.getPlayer1();
 		Character p2 = levelManager.getPlayer2();
+		ArrayList<Tile> tiles = levelManager.getActiveTiles();
+		//Character movement when single player
+		singlePlayerMovement(p1, p2);
+
+		// Apply Barrier Collisions
+		updatePhysics(p1, tiles);
+		updatePhysics(p2, tiles);
+
+		//Prepare Map to Check for Collisions
+		prepareMap(tiles);
+		
+		// Button, Gem, and Lava collisions
+		
+		// Run interaction loop to look at all tiles
+		boolean playerDied = checkTileInteractions(p1, p2, tiles);
+		if(playerDied) {
+			return;// to stop processing the frame and restart
+		}
+
+		// Check if the player(s) won!
+		winState(p1, p2, tiles);
+		
+		repaint();
+
+	}
+
+	private void singlePlayerMovement(Character p1, Character p2) {
 		Character activePlayer = null;
-		// Character movement if single player (based on boolean horizontal movement
-		// checkers)
+		// Character movement if single player (based on boolean horizontal movement checkers)
 		if (this.isSinglePlayer) {
 			if (this.controllingPlayerOne) {
 				activePlayer = p1;
@@ -191,81 +217,49 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				}
 			}
 		}
-		;
+	}
+	
+	private void prepareMap(ArrayList<Tile> tiles) {
+		//Reset the gem counter
+				this.darkGemsRemaining = false;
+				this.lightGemsRemaining = false;
+				
+				// Reset all buttons at the start of the frame processing
+				for (Tile t : tiles) {
+					if (t instanceof Button) {
+						((Button) t).release();
+					}
+					//Check if there are any gems that are remanining
+					if (t instanceof Gem) {
+						Gem gem = (Gem) t;
+						if ("Red".equals(gem.getColor())) {
+							this.lightGemsRemaining = true;
+						}
+						if ("Blue".equals(gem.getColor())) {
+							this.darkGemsRemaining = true;
+						}
+					}
 
-		// check every tile to see if character is colliding with them
-		ArrayList<Tile> tiles = levelManager.getActiveTiles();
-
-		// update the characters' positions
-
-		// Player 1 Wall Collisions
-		if (p1 != null) {
-			p1.updateX();// move horizontally
-
-			for (Tile t : tiles) {// check collisions
-				if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
-					if (p1 != null && t.isColliding(p1))
-						resolveHorizontalCollision(p1, t);
 				}
-			}
-		}
-		if (p1 != null) {
-			p1.updateY();// move vertically
-			for (Tile t : tiles) {// check collisions
-				if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
-					if (p1 != null && t.isColliding(p1))
-						resolveVerticalCollision(p1, t);
-				}
-			}
-		}
-
-		// Player 2 Wall Collisions
-		if (p2 != null) {
-			p2.updateX();// move horizontally
-
-			for (Tile t : tiles) {// check collisions
-				if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
-					if (t.isColliding(p2))
-						resolveHorizontalCollision(p2, t);
-				}
-			}
-			if (p2 != null)
-				p2.updateY();// move vertically
-			for (Tile t : tiles) {// check wall collisions
-				if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
-					if (p2 != null && t.isColliding(p2))
-						resolveVerticalCollision(p2, t);
-				}
-			}
-		}
-
-		// Button, Gem, and Lava collisions
-
-		// Reset all buttons at the start of the frame processing
-		for (Tile t : tiles) {
-			if (t instanceof Button) {
-				((Button) t).release();
-			}
-			if (t instanceof Gem) {
-				Gem gem = (Gem) t;
-				if ("Red".equals(gem.getColor())) {
-					this.darkGemsRemaining = true;
-				}
-				if ("Blue".equals(gem.getColor())) {
-					this.lightGemsRemaining = true;
-				}
-			}
-			
-		}
+	}
+	
+	/**
+	 * 
+	 * @param p1
+	 * @param p2
+	 * @return if a player died
+	 */
+	private boolean checkTileInteractions(Character p1, Character p2, ArrayList<Tile> tiles) {
 
 		// Run interaction loop to look at all tiles
+
 		// Player 1 Gem Collisions
 		for (int i = tiles.size() - 1; i >= 0; i--) {
 			Tile t = tiles.get(i);
 
 			if (p1 != null && t instanceof Gem && t.isColliding(p1)) {
 				Gem g = (Gem) t;
-				if ("Red".equals(g.getColor())) {
+				if (p1.getColor().equals(g.getColor())) {
 					// Collect the gem
 					tiles.remove(i);
 					System.out.println("Player 1 collected a red gem");
@@ -273,30 +267,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 
 			// Player 1 Lava Collisions
-
 			if (p1 != null && t instanceof Lava && t.isColliding(p1)) {
 				Lava l = (Lava) t;
-				if ("Blue".equals(l.getColor())) {
+				if (!p1.getColor().equals(l.getColor())) {
 					// kill player 1
 					System.out.println("Player1 jumped into lava");
 					resetLevel();
-					return;// to stop processing the frame and restart
-				}
-			}
-
-			// Player 1 Button Collisions
-			if (t instanceof Button) {
-				Button b = (Button) t;
-				if ((p1 != null && b.isColliding(p1)) || (p2 != null && b.isColliding(p2))) {
-					b.interact();
+					return true;// to stop processing the frame and restart
 				}
 			}
 
 			// Player 2 Gem Collisions
-
 			if (p2 != null && t instanceof Gem && t.isColliding(p2)) {
 				Gem g = (Gem) t;
-				if ("Blue".equals(g.getColor())) {
+				if (p2.getColor().equals(g.getColor())) {
 					// Collect the gem
 					tiles.remove(i);
 					System.out.println("Player 2 collected a blue gem");
@@ -304,14 +288,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 
 			// Player 2 Lava Collisions
-
 			if (p2 != null && t instanceof Lava && t.isColliding(p2)) {
 				Lava l = (Lava) t;
-				if ("Red".equals(l.getColor())) {
+				if (!p2.getColor().equals(l.getColor())) {
 					// kill player 1
 					System.out.println("Player2 jumped into lava");
 					resetLevel();
-					return;// to stop processing the frame and restart
+					return true;// to stop processing the frame and restart
 				}
 			}
 			// Lever collisions
@@ -319,43 +302,51 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				Lever lever = (Lever) t;
 				lever.update(p1, p2);
 			}
-		}
-		// Win state
-		boolean p1AtDoor = false;
-		boolean p2AtDoor = false;
-		for (Tile t : tiles) {
-			if (t instanceof Door) {
-				Door door = (Door) t;
-				// Open the door if the character collected enough gems
-					if ("Dark".equals(door.getColor()) && !this.darkGemsRemaining) {
-						door.open();
-					}
-					if ("Light".equals(door.getColor()) && !this.lightGemsRemaining) {
-						door.open();
-					}
-
-				
-				
-				if (door.isOpen()) {
-					if ("Dark".equals(door.getColor()) && p1 != null && door.isColliding(p1)) {
-						p1AtDoor = true;
-					}
-					if ("Light".equals(door.getColor()) && p2 != null && door.isColliding(p2)) {
-						p2AtDoor = true;
-					}
-				}
-				if (p1AtDoor && p2AtDoor) {
-					
-					leftPressed = false;
-					rightPressed = false;
-					levelManager.nextLevel();
-					levelManager.loadCurrentLevel();
-					return;
+			// Button Collisions
+			if (t instanceof Button) {
+				Button b = (Button) t;
+				if ((p1 != null && b.isColliding(p1)) || (p2 != null && b.isColliding(p2))) {
+					b.interact();
 				}
 			}
 		}
-		repaint();
+		return false;
+	}
 
+	private void updatePhysics(Character p, ArrayList<Tile> tiles) {
+		// Horizontal
+				if (p != null) {
+					p.updateX();// move horizontally
+
+					for (Tile t : tiles) {// check collisions
+						barrierCollisionsX(p, t);
+					}
+					// Vertical
+					p.updateY();// move vertically
+					for (Tile t : tiles) {// check collisions
+						barrierCollisionsY(p, t);
+					}
+				}
+	}
+	
+	/**
+	 * To check and fix horizontal barrier collisions with any character
+	 * 
+	 * @param p = Character
+	 * @param t = Tile
+	 */
+	private void barrierCollisionsX(Character p, Tile t) {
+		if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
+			if (p != null && t.isColliding(p))
+				resolveHorizontalCollision(p, t);
+		}
+	}
+
+	private void barrierCollisionsY(Character p, Tile t) {
+		if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
+			if (p != null && t.isColliding(p))
+				resolveVerticalCollision(p, t);
+		}
 	}
 
 	private void resolveHorizontalCollision(Character p, Tile t) {
@@ -397,6 +388,40 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			p.setY(p.getY() + intersection.height);// we push them to tile's bottom edge
 			p.setYVel(0);// make them stop moving up
 			// they aren't on the ground, so isOnFloor stays false
+		}
+	}
+	
+	private void winState(Character p1, Character p2, ArrayList<Tile> tiles) {
+		boolean p1AtDoor = false;
+		boolean p2AtDoor = false;
+		for (Tile t : tiles) {
+			if (t instanceof Door) {
+				Door door = (Door) t;
+				// Open the door if the character collected enough gems
+				if ("Dark".equals(door.getColor()) && !this.darkGemsRemaining) {
+					door.open();
+				}
+				if ("Light".equals(door.getColor()) && !this.lightGemsRemaining) {
+					door.open();
+				}
+
+				if (door.isOpen()) {
+					if ("Light".equals(door.getColor()) && p1 != null && door.isColliding(p1)) {
+						p1AtDoor = true;
+					}
+					if ("Dark".equals(door.getColor()) && p2 != null && door.isColliding(p2)) {
+						p2AtDoor = true;
+					}
+				}
+				if (p1AtDoor && p2AtDoor) {
+
+					leftPressed = false;
+					rightPressed = false;
+					levelManager.nextLevel();
+					levelManager.loadCurrentLevel();
+					return;
+				}
+			}
 		}
 	}
 

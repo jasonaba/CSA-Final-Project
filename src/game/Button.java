@@ -14,7 +14,7 @@ public class Button implements Tile, Switchable {
 	private boolean isOn;
 //Animation Variable
 	private static Image[] buttonFrames;
-	
+
 	// Constructor
 	public Button(int x, int y, int width, int height) {
 		this.x = x;
@@ -41,11 +41,7 @@ public class Button implements Tile, Switchable {
 
 	@Override
 	public boolean isColliding(Character c) {
-		return c.getX() + c.getWidth() >= this.getX()
-				/* Char right further right than Wall left */ && c.getX() <= this.getX()
-						+ this.getWidth() /* Char left further left than Wall right */
-				&& c.getY() + c.getHeight() >= this.getY() /* Char Bottom further down than Wall Top */
-				&& c.getY() <= this.getY() + this.getHeight();
+		return this.getBounds().intersects(c.getBounds());
 	}
 
 	// Getters
@@ -69,42 +65,42 @@ public class Button implements Tile, Switchable {
 		return height;
 	}
 
-	//Methods
-	
+	// Methods
+
 	@Override
 	public void draw(Graphics g) {
-		if(buttonFrames != null && buttonFrames[0] != null && buttonFrames[1] !=null) {
-			if(isOn) {
+		if (buttonFrames != null && buttonFrames[0] != null && buttonFrames[1] != null) {
+			if (isOn) {
 				g.drawImage(buttonFrames[1], x, y, width, height, null);
-			}else {
+			} else {
 				g.drawImage(buttonFrames[0], x, y, width, height, null);
 			}
-		}else {
-			if(!isOn) {
+		} else {
+			if (!isOn) {
 				g.setColor(Color.orange);
-			}else {
+			} else {
 				g.setColor(Color.green);
 			}
-				g.fillRect(x, y, width, height);
-			}
+			g.fillRect(x, y, width, height);
+		}
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
 	}
-	
+
 	public static void loadImages() {
 		try {
 			buttonFrames = new Image[2]; // Index 0 is Off, Index 1 is On
-			
+
 			// Reads the sheet as a BufferedImage to unlock .getSubimage()
-			BufferedImage sheet = ImageIO.read(new File("images/BSutton.png"));
-			
+			BufferedImage sheet = ImageIO.read(new File("images/Button.png"));
+
 			// Slicing vertically: (x, y, width, height)
-			buttonFrames[0] = sheet.getSubimage(0, 0, 40, 40);  // Top frame (Off)
-			buttonFrames[1] = sheet.getSubimage(0, 40, 40, 40); // Bottom frame (On)
-			
+			buttonFrames[0] = sheet.getSubimage(0, 0, 32, 32); // Top frame (Off)
+			buttonFrames[1] = sheet.getSubimage(0, 32, 32, 32); // Bottom frame (On)
+
 			System.out.println("Button images sliced successfully!");
 		} catch (IOException e) {
 			System.out.println("Error: Could not load images/button.png. Using backup colors.");
