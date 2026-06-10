@@ -14,12 +14,14 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	private Level levelManager;// controls everything to do with the levels
 	private Timer gameClock;// for the loop
-	private boolean isSinglePlayer, controllingPlayerOne, leftPressed, rightPressed;
-	
+	private boolean isSinglePlayer, controllingPlayerOne, leftPressed, rightPressed, lightGemsRemaining,
+			darkGemsRemaining;
+
 	public GamePanel() {
 		Wall.loadImages();
 		Button.loadImages();
 		Lever.loadImages();
+		Door.loadImages();
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
 		this.setBackground(Color.white);
 
@@ -29,6 +31,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		// Track if user wants to move left or right
 		leftPressed = false;
 		rightPressed = false;
+
+		// tracks if any gems are remaning
+		this.lightGemsRemaining = false;
+		this.darkGemsRemaining = false;
 
 		// create level manager
 		levelManager = new Level();
@@ -240,9 +246,29 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			if (t instanceof Button) {
 				((Button) t).release();
 			}
+			if (t instanceof Gem) {
+				Gem gem = (Gem) t;
+				if ("Red".equals(gem.getColor())) {
+					this.darkGemsRemaining = true;
+				}
+				if ("Blue".equals(gem.getColor())) {
+					this.lightGemsRemaining = true;
+				}
+			}
+			// Open the door if the character collected enough gems
+			if (t instanceof Door) {
+				Door door = (Door) t;
+				if ("Dark".equals(door.getColor()) && !this.darkGemsRemaining) {
+					door.open();
+				}
+				if ("Light".equals(door.getColor()) && this.lightGemsRemaining) {
+					door.open();
+				}
+
+			}
 		}
 
-		//Run interaction loop to look at all tiles
+		// Run interaction loop to look at all tiles
 		// Player 1 Gem Collisions
 		for (int i = tiles.size() - 1; i >= 0; i--) {
 			Tile t = tiles.get(i);
@@ -298,9 +324,37 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 					return;// to stop processing the frame and restart
 				}
 			}
-
+			// Lever collisions
+			if (t instanceof Lever) {
+				Lever lever = (Lever) t;
+				lever.update(p1, p2);
+			}
 		}
+		// Win state
+		boolean p1AtDoor = false;
+		boolean p2AtDoor = false;
+		for (Tile t : tiles) {
+			if (t instanceof Door) {
+				Door door = (Door) t;
 
+				if (door.isOpen()) {
+					if ("Dark".equals(door.getColor()) && p1 != null && door.isColliding(p1)) {
+						p1AtDoor = true;
+					}
+					if ("Light".equals(door.getColor()) && p2 != null && door.isColliding(p2)) {
+						p2AtDoor = true;
+					}
+				}
+				if (p1AtDoor && p2AtDoor) {
+					
+					leftPressed = false;
+					rightPressed = false;
+					levelManager.nextLevel();
+					levelManager.loadCurrentLevel();
+					return;
+				}
+			}
+		}
 		repaint();
 
 	}

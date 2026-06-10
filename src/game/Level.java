@@ -78,6 +78,11 @@ public class Level {
 		
 	}
 	
+	public void nextLevel() {
+		currentLevelIndex++; // Move to next level index
+		System.out.println("Advancing to Level " + currentLevelIndex);
+	}
+	
 	/**
 	 * Loads the level at the current index to be drawn on the screen
 	 */
@@ -102,10 +107,10 @@ public class Level {
 					activeTiles.add(new Gem(xPixel, yPixel, 40, 40, "Blue"));
 				}
 				else if(symbol=='D') {
-					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Red"));
+					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Dark"));
 				}
 				else if(symbol=='E') {
-					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Blue"));
+					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Light"));
 				}
 				else if(symbol=='X') {
 					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Red"));
