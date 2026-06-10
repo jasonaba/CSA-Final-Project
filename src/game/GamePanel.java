@@ -255,17 +255,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 					this.lightGemsRemaining = true;
 				}
 			}
-			// Open the door if the character collected enough gems
-			if (t instanceof Door) {
-				Door door = (Door) t;
-				if ("Dark".equals(door.getColor()) && !this.darkGemsRemaining) {
-					door.open();
-				}
-				if ("Light".equals(door.getColor()) && this.lightGemsRemaining) {
-					door.open();
-				}
-
-			}
+			
 		}
 
 		// Run interaction loop to look at all tiles
@@ -336,7 +326,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		for (Tile t : tiles) {
 			if (t instanceof Door) {
 				Door door = (Door) t;
+				// Open the door if the character collected enough gems
+					if ("Dark".equals(door.getColor()) && !this.darkGemsRemaining) {
+						door.open();
+					}
+					if ("Light".equals(door.getColor()) && !this.lightGemsRemaining) {
+						door.open();
+					}
 
+				
+				
 				if (door.isOpen()) {
 					if ("Dark".equals(door.getColor()) && p1 != null && door.isColliding(p1)) {
 						p1AtDoor = true;
