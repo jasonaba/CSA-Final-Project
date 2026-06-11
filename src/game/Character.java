@@ -53,9 +53,10 @@ public class Character {
 
 			// AP CSA: Slicing the 2x2 array out using 32x32 bounding boxes
 			frames[0] = sheet.getSubimage(0, 0, 32, 32); // Top Left (Idle)
-			frames[1] = sheet.getSubimage(32, 0, 32, 32); // Top Right (Walk 1)
+			frames[1] = sheet.getSubimage(100, 0, 32, 32); // Top Right (Walk 1)
+			/*
 			frames[2] = sheet.getSubimage(0, 32, 32, 32); // Bottom Left (Walk 2)
-			frames[3] = sheet.getSubimage(32, 32, 32, 32); // Bottom Right (Jump)
+			frames[3] = sheet.getSubimage(32, 32, 32, 32); // Bottom Right (Jump)*/
 		} catch (IOException e) {
 			System.out.println("Unable to load character image");
 			e.printStackTrace();

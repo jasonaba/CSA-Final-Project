@@ -15,10 +15,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	private Level levelManager;// controls everything to do with the levels
 	private Timer gameClock;// for the loop
 	private boolean isSinglePlayer, controllingPlayerOne, leftPressed, rightPressed, lightGemsRemaining,
-			darkGemsRemaining;
+			darkGemsRemaining, switchIsActive;
 
 	public GamePanel() {
 		Wall.loadImages();
+		Platform.loadImages();
 		Button.loadImages();
 		Lever.loadImages();
 		Door.loadImages();
@@ -301,6 +302,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			if (t instanceof Lever) {
 				Lever lever = (Lever) t;
 				lever.update(p1, p2);
+				if(lever.switchedOn()) {
+					switchIsActive = true;
+				}else {
+					switchIsActive = false;
+				}
 			}
 			// Button Collisions
 			if (t instanceof Button) {
@@ -308,6 +314,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				if ((p1 != null && b.isColliding(p1)) || (p2 != null && b.isColliding(p2))) {
 					b.interact();
 				}
+				if(b.switchedOn()) {
+					switchIsActive = true;
+				}else {
+					switchIsActive = false;
+				}
+			}
+			//Platform Collisions
+			if(t instanceof Platform) {
+				Platform platform = (Platform)t;
+				platform.setState(switchIsActive);
 			}
 		}
 		return false;
@@ -336,14 +352,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	 * @param t = Tile
 	 */
 	private void barrierCollisionsX(Character p, Tile t) {
-		if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
+		if (t instanceof Wall || (t instanceof Platform) || (t instanceof Door && !((Door) t).isOpen())) {
 			if (p != null && t.isColliding(p))
 				resolveHorizontalCollision(p, t);
 		}
 	}
 
 	private void barrierCollisionsY(Character p, Tile t) {
-		if (t instanceof Wall || (t instanceof Door && !((Door) t).isOpen())) {
+		if (t instanceof Wall || (t instanceof Platform) || (t instanceof Door && !((Door) t).isOpen())) {
 			if (p != null && t.isColliding(p))
 				resolveVerticalCollision(p, t);
 		}
