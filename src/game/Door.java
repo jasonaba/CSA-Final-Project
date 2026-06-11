@@ -84,14 +84,14 @@ public class Door implements Tile {
 		Image currentSprite = null;
 		if (darkClosed != null && darkOpened != null && lightClosed != null && lightOpened != null) {
 
-			if ("Dark".equals(color)) {
+			if ("Purple".equals(color)) {
 				if (isOpen) {
 					currentSprite = darkOpened;
 				} else {
 					currentSprite = darkClosed;
 				}
 			}
-			if ("Light".equals(color)) {
+			if ("Green".equals(color)) {
 				if (isOpen) {
 					currentSprite = lightOpened;
 				} else {
@@ -104,10 +104,10 @@ public class Door implements Tile {
 			}
 		} else {
 			if (!isOpen) {
-				if ("Dark".equals(color))
-					g.setColor(Color.DARK_GRAY);
-				else if ("Light".equals(color))
-					g.setColor(Color.gray);
+				if ("Purple".equals(color))
+					g.setColor(new Color(128, 0, 128));
+				else if ("Green".equals(color))
+					g.setColor(Color.green);
 			} else {
 				g.setColor(Color.black);
 			}

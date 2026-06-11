@@ -32,7 +32,7 @@ public class Level {
 			    {'W','W','W',' ',' ',' ','W',' ',' ',' ',' ',' ',' ','W','W','W','W','W','W','W'},
 			    {'W','R',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','W'},
 			    {'W','W','W','W','W','W','W','W','X','X','Y','Y','W','W','W','W',' ',' ',' ','W'},
-			    {'W','W','W','W',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','W',' ','B',' ','W'},
+			    {'W','W','W','W',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','W',' ','G',' ','W'},
 			    {'W','D',' ',' ',' ',' ',' ',' ',' ','O',' ',' ',' ',' ',' ','W','W','W','W','W'},
 			    {'W','W',' ',' ',' ',' ','W','W','W','W','W','W','W',' ',' ',' ',' ',' ',' ','W'},
 			    {'W',' ','P',' ',' ',' ','W',' ',' ',' ',' ',' ','W',' ',' ',' ',' ',' ',' ','W'},
@@ -47,7 +47,7 @@ public class Level {
 				{'W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W'}, // 0
 			    {'W','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','W'}, // 1
 			    {'W','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','W'}, // 2
-			    {'W','.','.','.','.','.','.','.','.','.','B','.','.','.','.','.','.','.','.','W'}, // 3
+			    {'W','.','.','.','.','.','.','.','.','.','G','.','.','.','.','.','.','.','.','W'}, // 3
 			    {'W','.','.','.','.','.','.','.','.','W','W','W','.','.','.','.','.','.','.','W'}, // 4
 			    {'W','.','R','.','.','.','.','.','P','.','.','.','.','W','.','R','.','.','.','W'}, // 5
 			    {'W','W','W','W','W','.','.','.','.','.','.','.','.','.','W','W','W','.','.','W'}, // 6
@@ -56,7 +56,7 @@ public class Level {
 			    {'W','.','.','.','W','.','.','.','.','.','.','.','.','.','.','.','.','D','E','W'}, // 9
 			    {'W','.','.','.','0','.','.','.','.','W','W','W','W','W','W','W','W','W','W','W'}, // 10
 			    {'W','.','.','W','W','W','.','.','.','W','.','.','.','.','.','.','.','.','.','W'}, // 11
-			    {'W','.','.','.','.','.','.','W','.','.','.','.','.','.','.','B','.','.','.','W'}, // 12
+			    {'W','.','.','.','.','.','.','W','.','.','.','.','.','.','.','G','.','.','.','W'}, // 12
 			    {'W','1','2','.','.','.','.','.','.','.','.','.','.','.','.','.','L','.','.','W'}, // 13 (Hazards!)
 			    {'W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W'}  // 14
 			};
@@ -104,22 +104,22 @@ public class Level {
 					activeTiles.add(new Platform(xPixel, yPixel, 40, 40));
 				}
 				else if(symbol=='R') {
-					activeTiles.add(new Gem(xPixel, yPixel, 40, 40, "Red"));
+					activeTiles.add(new Gem(xPixel, yPixel, 40, 40, "Purple"));
 				}
-				else if(symbol=='B') {
-					activeTiles.add(new Gem(xPixel, yPixel, 40, 40, "Blue"));
+				else if(symbol=='G') {
+					activeTiles.add(new Gem(xPixel, yPixel, 40, 40, "Green"));
 				}
 				else if(symbol=='D') {
-					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Dark"));
+					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Purple"));
 				}
 				else if(symbol=='E') {
-					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Light"));
+					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Green"));
 				}
 				else if(symbol=='X') {
-					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Red"));
+					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Purple"));
 				}
 				else if(symbol=='Y') {
-					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Blue"));
+					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Green"));
 				}
 				else if (symbol == 'O') {
 	                activeTiles.add(new Button(xPixel, yPixel, 40, 40));
@@ -128,10 +128,10 @@ public class Level {
 	                activeTiles.add(new Lever(xPixel, yPixel, 40, 40));
 	            }
 	            else if(symbol == '1') {
-	            	player1 = new Character(xPixel, yPixel, 30, 30, "Red", true);
+	            	player1 = new Character(xPixel, yPixel, 30, 30, "Purple", true);
 	            }
 	            else if(symbol == '2') {
-	            	player2 = new Character(xPixel, yPixel, 30, 30, "Blue", false);
+	            	player2 = new Character(xPixel, yPixel, 30, 30, "Green", false);
 	            }
 			}
 		}

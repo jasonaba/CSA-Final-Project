@@ -58,10 +58,10 @@ public class Lava implements Tile {
 
 	@Override
 	public void draw(Graphics g) {
-		if (color.equals("Red"))
-			g.setColor(Color.red);
-		if (color.equals("Blue"))
-			g.setColor(Color.blue);
+		if (color.equals("Purple"))
+			g.setColor(new Color(128, 0, 128));
+		if (color.equals("Green"))
+			g.setColor(Color.green);
 		g.fillRect(x, y, width, height);
 	}
 

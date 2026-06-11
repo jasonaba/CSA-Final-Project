@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	private Level levelManager;// controls everything to do with the levels
 	private Timer gameClock;// for the loop
-	private boolean isSinglePlayer, controllingPlayerOne, leftPressed, rightPressed, lightGemsRemaining,
-			darkGemsRemaining, switchIsActive;
+	private boolean isSinglePlayer, controllingPlayerOne, leftPressed, rightPressed, greenGemsRemaining,
+			purpleGemsRemaining, switchIsActive;
 
 	public GamePanel() {
 		Wall.loadImages();
@@ -24,7 +24,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		Lever.loadImages();
 		Door.loadImages();
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
-		this.setBackground(Color.white);
+		this.setBackground(Color.LIGHT_GRAY);
 
 		this.isSinglePlayer = true;
 		controllingPlayerOne = true;// tracks in one-player mode what character is being controlled
@@ -34,8 +34,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		rightPressed = false;
 
 		// tracks if any gems are remaning
-		this.lightGemsRemaining = false;
-		this.darkGemsRemaining = false;
+		this.greenGemsRemaining = false;
+		this.purpleGemsRemaining = false;
 
 		// create level manager
 		levelManager = new Level();
@@ -225,8 +225,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	private void prepareMap(ArrayList<Tile> tiles) {
 		// Reset the gem counter
-		this.darkGemsRemaining = false;
-		this.lightGemsRemaining = false;
+		this.purpleGemsRemaining = false;
+		this.greenGemsRemaining = false;
 
 		// Reset all buttons at the start of the frame processing
 		for (Tile t : tiles) {
@@ -236,11 +236,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			// Check if there are any gems that are remanining
 			if (t instanceof Gem) {
 				Gem gem = (Gem) t;
-				if ("Red".equals(gem.getColor())) {
-					this.lightGemsRemaining = true;
+				if ("Purple".equals(gem.getColor())) {
+					this.greenGemsRemaining = true;
 				}
-				if ("Blue".equals(gem.getColor())) {
-					this.darkGemsRemaining = true;
+				if ("Purple".equals(gem.getColor())) {
+					this.purpleGemsRemaining = true;
 				}
 			}
 
@@ -417,18 +417,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			if (t instanceof Door) {
 				Door door = (Door) t;
 				// Open the door if the character collected enough gems
-				if ("Dark".equals(door.getColor()) && !this.darkGemsRemaining) {
+				if ("Purple".equals(door.getColor()) && !this.purpleGemsRemaining) {
 					door.open();
 				}
-				if ("Light".equals(door.getColor()) && !this.lightGemsRemaining) {
+				if ("Green".equals(door.getColor()) && !this.greenGemsRemaining) {
 					door.open();
 				}
 
 				if (door.isOpen()) {
-					if ("Light".equals(door.getColor()) && p1 != null && door.isColliding(p1)) {
+					if ("Purple".equals(door.getColor()) && p1 != null && door.isColliding(p1)) {
 						p1AtDoor = true;
 					}
-					if ("Dark".equals(door.getColor()) && p2 != null && door.isColliding(p2)) {
+					if ("Green".equals(door.getColor()) && p2 != null && door.isColliding(p2)) {
 						p2AtDoor = true;
 					}
 				}

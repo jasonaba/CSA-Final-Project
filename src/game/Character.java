@@ -167,11 +167,11 @@ public class Character {
 		}
 		} else {
 			// just in case image is missing
-			if ("Red".equals(color))
-				g.setColor(Color.RED);
+			if ("Purple".equals(color))
+				g.setColor(new Color(128,0,128));
 
-			else if ("Blue".equals(color))
-				g.setColor(Color.blue);
+			else if ("Green".equals(color))
+				g.setColor(Color.green);
 			g.fillRect(x, y, width, height);
 		}
 	}
