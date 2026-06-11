@@ -42,6 +42,8 @@ public class Character {
 
 	private void loadSpritesheet() {
 		String filename = "";
+
+		
 		try {
 			if (isPlayerOne) {
 				filename = "images/player1.png";
@@ -50,10 +52,11 @@ public class Character {
 			}
 			//So we can use Subimage
 			BufferedImage sheet = ImageIO.read(new File(filename));
-
+			int frameWidth= sheet.getWidth();
+			int frameHeight = sheet.getHeight();
 			// AP CSA: Slicing the 2x2 array out using 32x32 bounding boxes
-			frames[0] = sheet.getSubimage(0, 0, 32, 32); // Top Left (Idle)
-			frames[1] = sheet.getSubimage(100, 0, 32, 32); // Top Right (Walk 1)
+			frames[0] = sheet.getSubimage(0, 0, frameWidth, frameHeight/2); // Top Left (Idle)
+			frames[1] = sheet.getSubimage(0, frameHeight/2, frameWidth, frameHeight/2); // Top Right (Walk 1)
 			/*
 			frames[2] = sheet.getSubimage(0, 32, 32, 32); // Bottom Left (Walk 2)
 			frames[3] = sheet.getSubimage(32, 32, 32, 32); // Bottom Right (Jump)*/
@@ -147,12 +150,12 @@ public class Character {
 		Image activeFrame = frames[0];
 		
 		if(!isOnFloor){//if falling/not on ground
-			activeFrame = frames[2];
+			activeFrame = frames[0];
 		}else if (xVel != 0) {//if moving on the ground
 			if((animationCounter/10)%2 == 0) {
 				activeFrame = frames[1];
 			}else {
-				activeFrame = frames[2];
+				activeFrame = frames[0];
 			}
 		}
 		

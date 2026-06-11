@@ -78,6 +78,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
+		System.out.println("PRESSED");
 		Character activePlayer = null;
 		Character p1 = levelManager.getPlayer1();
 		Character p2 = levelManager.getPlayer2();
@@ -174,34 +175,36 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		Character p1 = levelManager.getPlayer1();
 		Character p2 = levelManager.getPlayer2();
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
-		//Character movement when single player
+		// Character movement when single player
 		singlePlayerMovement(p1, p2);
 
 		// Apply Barrier Collisions
 		updatePhysics(p1, tiles);
 		updatePhysics(p2, tiles);
 
-		//Prepare Map to Check for Collisions
+		// Prepare Map to Check for Collisions
 		prepareMap(tiles);
-		
+
 		// Button, Gem, and Lava collisions
-		
+
 		// Run interaction loop to look at all tiles
 		boolean playerDied = checkTileInteractions(p1, p2, tiles);
-		if(playerDied) {
+		if (playerDied||p1.getX()>this.getWidth()||p1.getY()>this.getHeight()||p2.getX()>this.getWidth()||p2.getY()>this.getHeight()) {
+			resetLevel();
 			return;// to stop processing the frame and restart
 		}
 
 		// Check if the player(s) won!
 		winState(p1, p2, tiles);
-		
+
 		repaint();
 
 	}
 
 	private void singlePlayerMovement(Character p1, Character p2) {
 		Character activePlayer = null;
-		// Character movement if single player (based on boolean horizontal movement checkers)
+		// Character movement if single player (based on boolean horizontal movement
+		// checkers)
 		if (this.isSinglePlayer) {
 			if (this.controllingPlayerOne) {
 				activePlayer = p1;
@@ -219,31 +222,31 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 		}
 	}
-	
-	private void prepareMap(ArrayList<Tile> tiles) {
-		//Reset the gem counter
-				this.darkGemsRemaining = false;
-				this.lightGemsRemaining = false;
-				
-				// Reset all buttons at the start of the frame processing
-				for (Tile t : tiles) {
-					if (t instanceof Button) {
-						((Button) t).release();
-					}
-					//Check if there are any gems that are remanining
-					if (t instanceof Gem) {
-						Gem gem = (Gem) t;
-						if ("Red".equals(gem.getColor())) {
-							this.lightGemsRemaining = true;
-						}
-						if ("Blue".equals(gem.getColor())) {
-							this.darkGemsRemaining = true;
-						}
-					}
 
+	private void prepareMap(ArrayList<Tile> tiles) {
+		// Reset the gem counter
+		this.darkGemsRemaining = false;
+		this.lightGemsRemaining = false;
+
+		// Reset all buttons at the start of the frame processing
+		for (Tile t : tiles) {
+			if (t instanceof Button) {
+				((Button) t).release();
+			}
+			// Check if there are any gems that are remanining
+			if (t instanceof Gem) {
+				Gem gem = (Gem) t;
+				if ("Red".equals(gem.getColor())) {
+					this.lightGemsRemaining = true;
 				}
+				if ("Blue".equals(gem.getColor())) {
+					this.darkGemsRemaining = true;
+				}
+			}
+
+		}
 	}
-	
+
 	/**
 	 * 
 	 * @param p1
@@ -273,7 +276,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				if (!p1.getColor().equals(l.getColor())) {
 					// kill player 1
 					System.out.println("Player1 jumped into lava");
-					resetLevel();
 					return true;// to stop processing the frame and restart
 				}
 			}
@@ -294,7 +296,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				if (!p2.getColor().equals(l.getColor())) {
 					// kill player 1
 					System.out.println("Player2 jumped into lava");
-					resetLevel();
 					return true;// to stop processing the frame and restart
 				}
 			}
@@ -302,9 +303,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			if (t instanceof Lever) {
 				Lever lever = (Lever) t;
 				lever.update(p1, p2);
-				if(lever.switchedOn()) {
+				if (lever.switchedOn()) {
 					switchIsActive = true;
-				}else {
+				} else {
 					switchIsActive = false;
 				}
 			}
@@ -314,37 +315,39 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				if ((p1 != null && b.isColliding(p1)) || (p2 != null && b.isColliding(p2))) {
 					b.interact();
 				}
-				if(b.switchedOn()) {
+				if (b.switchedOn()) {
 					switchIsActive = true;
-				}else {
+				} else {
 					switchIsActive = false;
 				}
 			}
-			//Platform Collisions
-			if(t instanceof Platform) {
-				Platform platform = (Platform)t;
+			// Platform Collisions
+			if (t instanceof Platform) {
+				Platform platform = (Platform) t;
+
 				platform.setState(switchIsActive);
 			}
 		}
+
 		return false;
 	}
 
 	private void updatePhysics(Character p, ArrayList<Tile> tiles) {
 		// Horizontal
-				if (p != null) {
-					p.updateX();// move horizontally
+		if (p != null) {
+			p.updateX();// move horizontally
 
-					for (Tile t : tiles) {// check collisions
-						barrierCollisionsX(p, t);
-					}
-					// Vertical
-					p.updateY();// move vertically
-					for (Tile t : tiles) {// check collisions
-						barrierCollisionsY(p, t);
-					}
-				}
+			for (Tile t : tiles) {// check collisions
+				barrierCollisionsX(p, t);
+			}
+			// Vertical
+			p.updateY();// move vertically
+			for (Tile t : tiles) {// check collisions
+				barrierCollisionsY(p, t);
+			}
+		}
 	}
-	
+
 	/**
 	 * To check and fix horizontal barrier collisions with any character
 	 * 
@@ -359,7 +362,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	private void barrierCollisionsY(Character p, Tile t) {
-		if (t instanceof Wall || (t instanceof Platform) || (t instanceof Door && !((Door) t).isOpen())) {
+		if (t instanceof Wall || (t instanceof Platform)|| (t instanceof Door && !((Door) t).isOpen())) {
 			if (p != null && t.isColliding(p))
 				resolveVerticalCollision(p, t);
 		}
@@ -406,7 +409,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			// they aren't on the ground, so isOnFloor stays false
 		}
 	}
-	
+
 	private void winState(Character p1, Character p2, ArrayList<Tile> tiles) {
 		boolean p1AtDoor = false;
 		boolean p2AtDoor = false;
