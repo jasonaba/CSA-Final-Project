@@ -21,6 +21,10 @@ public class Level {
 	}
 	public Character getPlayer1() { return player1;}
 	public Character getPlayer2() { return player2;}
+	public int getCurrentLevelIndex() {
+		return currentLevelIndex;
+	}
+	public ArrayList<char[][]> getBlueprints(){return blueprints;}
 	
 	//Methods
 	private void initializeLevels() {

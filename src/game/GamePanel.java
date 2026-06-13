@@ -26,7 +26,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
 		this.setBackground(Color.LIGHT_GRAY);
 
-		this.isSinglePlayer = true;
+		this.isSinglePlayer = false;
 		controllingPlayerOne = true;// tracks in one-player mode what character is being controlled
 
 		// Track if user wants to move left or right
@@ -173,6 +173,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		Character p1 = levelManager.getPlayer1();
 		Character p2 = levelManager.getPlayer2();
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
+		
 		// Character movement when single player
 		singlePlayerMovement(p1, p2);
 
@@ -442,6 +443,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 				leftPressed = false;
 				rightPressed = false;
+				if(levelManager.getCurrentLevelIndex()==levelManager.getBlueprints().size()-1) {
+					System.out.println("You finished the game!");
+					return;
+				}
 				levelManager.nextLevel();
 				levelManager.loadCurrentLevel();
 				return;
