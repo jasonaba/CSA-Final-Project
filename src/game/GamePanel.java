@@ -78,7 +78,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		System.out.println("PRESSED");
 		Character activePlayer = null;
 		Character p1 = levelManager.getPlayer1();
 		Character p2 = levelManager.getPlayer2();
@@ -95,7 +94,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 				// Active Player Indicator
 				controllingPlayerOne = !controllingPlayerOne;
-				System.out.println("Switched characters! Controlling Player 1: " + this.controllingPlayerOne);
 			}
 			return;
 		}
@@ -189,12 +187,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 		// Run interaction loop to look at all tiles
 		boolean playerDied = checkTileInteractions(p1, p2, tiles);
-		if (playerDied||p1.getX()>this.getWidth()||p1.getY()>this.getHeight()||p2.getX()>this.getWidth()||p2.getY()>this.getHeight()) {
+		if (playerDied) {
 			resetLevel();
-			return;// to stop processing the frame and restart
+			return;
 		}
+		if (this.getWidth() > 0 && this.getHeight() > 0) {
 
-		// Check if the player(s) won!
+			// Individually check if p1 and p2 are OOB to make level restart
+			boolean p1OutOfBounds = (p1 != null) && (p1.getX() > this.getWidth() || p1.getY() > this.getHeight());
+			boolean p2OutOfBounds = (p2 != null) && (p2.getX() > this.getWidth() || p2.getY() > this.getHeight());
+
+			if (p1OutOfBounds || p2OutOfBounds) {
+				resetLevel();
+				return;
+			}
+		}
+		// Check if the player(s) won
 		winState(p1, p2, tiles);
 
 		repaint();
@@ -229,6 +237,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		this.greenGemsRemaining = false;
 
 		// Reset all buttons at the start of the frame processing
+		switchIsActive = false;
 		for (Tile t : tiles) {
 			if (t instanceof Button) {
 				((Button) t).release();
@@ -236,7 +245,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			// Check if there are any gems that are remanining
 			if (t instanceof Gem) {
 				Gem gem = (Gem) t;
-				if ("Purple".equals(gem.getColor())) {
+				if ("Green".equals(gem.getColor())) {
 					this.greenGemsRemaining = true;
 				}
 				if ("Purple".equals(gem.getColor())) {
@@ -266,7 +275,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				if (p1.getColor().equals(g.getColor())) {
 					// Collect the gem
 					tiles.remove(i);
-					System.out.println("Player 1 collected a red gem");
 				}
 			}
 
@@ -275,7 +283,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				Lava l = (Lava) t;
 				if (!p1.getColor().equals(l.getColor())) {
 					// kill player 1
-					System.out.println("Player1 jumped into lava");
 					return true;// to stop processing the frame and restart
 				}
 			}
@@ -286,7 +293,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				if (p2.getColor().equals(g.getColor())) {
 					// Collect the gem
 					tiles.remove(i);
-					System.out.println("Player 2 collected a blue gem");
 				}
 			}
 
@@ -295,7 +301,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				Lava l = (Lava) t;
 				if (!p2.getColor().equals(l.getColor())) {
 					// kill player 1
-					System.out.println("Player2 jumped into lava");
+					
 					return true;// to stop processing the frame and restart
 				}
 			}
@@ -305,8 +311,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				lever.update(p1, p2);
 				if (lever.switchedOn()) {
 					switchIsActive = true;
-				} else {
-					switchIsActive = false;
 				}
 			}
 			// Button Collisions
@@ -317,10 +321,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				}
 				if (b.switchedOn()) {
 					switchIsActive = true;
-				} else {
-					switchIsActive = false;
 				}
 			}
+		}
+		for (Tile t : tiles) {// in it's own loop so even if the tile is checked before the levers/buttons it
+								// still gets updated
 			// Platform Collisions
 			if (t instanceof Platform) {
 				Platform platform = (Platform) t;
@@ -362,7 +367,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	private void barrierCollisionsY(Character p, Tile t) {
-		if (t instanceof Wall || (t instanceof Platform)|| (t instanceof Door && !((Door) t).isOpen())) {
+		if (t instanceof Wall || (t instanceof Platform) || (t instanceof Door && !((Door) t).isOpen())) {
 			if (p != null && t.isColliding(p))
 				resolveVerticalCollision(p, t);
 		}
@@ -432,20 +437,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 						p2AtDoor = true;
 					}
 				}
-				if (p1AtDoor && p2AtDoor) {
-
-					leftPressed = false;
-					rightPressed = false;
-					levelManager.nextLevel();
-					levelManager.loadCurrentLevel();
-					return;
-				}
 			}
+			if (p1AtDoor && p2AtDoor) {
+
+				leftPressed = false;
+				rightPressed = false;
+				levelManager.nextLevel();
+				levelManager.loadCurrentLevel();
+				return;
+			}
+
 		}
 	}
 
 	private void resetLevel() {
-		System.out.println("You died... Try again!");
 		levelManager.loadCurrentLevel();
 
 		// Reset key presses so characters spawn standing still

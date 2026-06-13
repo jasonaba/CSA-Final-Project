@@ -60,7 +60,6 @@ public class Door implements Tile {
 		try {
 			darkClosed = ImageIO.read(new File("images/Dark_Door.png"));
 			darkOpened = ImageIO.read(new File("images/Opened_Dark_Door.png"));
-			System.out.println("Door images loaded successfully!");
 			lightClosed = ImageIO.read(new File("images/Light_Door.png"));
 			lightOpened = ImageIO.read(new File("images/Opened_Light_Door.png"));
 			System.out.println("All Door images loaded successfully!");

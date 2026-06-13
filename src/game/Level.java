@@ -56,8 +56,8 @@ public class Level {
 			    {'W','.','.','.','W','.','.','.','.','.','.','.','.','.','.','.','.','D','E','W'}, // 9
 			    {'W','.','.','.','0','.','.','.','.','W','W','W','W','W','W','W','W','W','W','W'}, // 10
 			    {'W','.','.','W','W','W','.','.','.','W','.','.','.','.','.','.','.','.','.','W'}, // 11
-			    {'W','.','.','.','.','.','.','W','.','.','.','.','.','.','.','G','.','.','.','W'}, // 12
-			    {'W','1','2','.','.','.','.','.','.','.','.','.','.','.','.','.','L','.','.','W'}, // 13 (Hazards!)
+			    {'W','.','.','.','.','.','.','W','.','Y','.','.','.','.','.','G','.','.','.','W'}, // 12
+			    {'W','1','2','.','.','.','.','.','.','Y','.','.','.','.','.','.','L','.','.','W'}, // 13 (Hazards!)
 			    {'W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W','W'}  // 14
 			};
 
@@ -66,7 +66,6 @@ public class Level {
 	
 	public void printCurrentLevelToConsole() {
 		char[][] currentMap = blueprints.get(currentLevelIndex);
-		System.out.println("Loading level " + (currentLevelIndex +1) + ":\n");
 		
 		for(int row = 0; row<currentMap.length; row++) {
 			for(int col = 0; col<currentMap[row].length; col++) {
@@ -80,7 +79,6 @@ public class Level {
 	
 	public void nextLevel() {
 		currentLevelIndex++; // Move to next level index
-		System.out.println("Advancing to Level " + currentLevelIndex);
 	}
 	
 	/**
@@ -135,7 +133,6 @@ public class Level {
 	            }
 			}
 		}
-		System.out.println("Level loaded! Active tiles: " + activeTiles.size() );
 		
 	}
 }
