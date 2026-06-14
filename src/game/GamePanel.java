@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	public enum GameState {// To track what state the game is in
-		MAIN_MENU, MODE_SELECT, LEVEL_SELECT, PLAYING, PAUSED, DEATH_SCREEN, WIN_SCREEN
+		MAIN_MENU, MODE_SELECT, LEVEL_SELECT, PLAYING, PAUSED, DEATH_SCREEN, WIN_SCREEN, NEXT_LEVEL
 	}
 
 	private GameState currentState;
@@ -87,11 +87,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		case WIN_SCREEN:
 			this.drawWinScreen(g);
 			break;
+		case NEXT_LEVEL:
+			this.drawNextLevel(g);
+			;
 		}
 
 	}
 
-	public void drawMainMenu(Graphics g) {
+	private void drawMainMenu(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight()); // Black background
 
@@ -105,7 +108,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	}
 
-	public void drawGameplay(Graphics g) {
+	private void drawGameplay(Graphics g) {
 		// loop through all active tiles and make them draw themselves
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
 
@@ -123,24 +126,94 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			p2.draw(g);
 	}
 
-	public void drawModeSelect(Graphics g) {
+	private void drawModeSelect(Graphics g) {
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.BOLD, 40));
+		g.drawString("SELECT GAME MODE", 180, 150);
+
+		g.setFont(new Font("Arial", Font.PLAIN, 25));
+		g.setColor(Color.GREEN);
+		g.drawString("Press '1' for Single Player (Swap with SPACE)", 130, 300);
+
+		g.setColor(new Color(150, 0, 255)); // Purple
+		g.drawString("Press '2' for Co-op (WASD & Arrows)", 180, 400);
 	}
 
-	public void drawLevelSelect(Graphics g) {
+	private void drawLevelSelect(Graphics g) {
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.BOLD, 40));
+		g.drawString("LEVEL SELECT", 250, 100);
+
+		g.setFont(new Font("Arial", Font.PLAIN, 20));
+		g.drawString("Press the number key to load the level:", 220, 150);
+
+		// Draw Level 1 Box
+		g.setColor(Color.GRAY);
+		g.fillRect(150, 250, 150, 150);
+		g.setColor(Color.WHITE);
+		g.drawRect(150, 250, 150, 150);
+		g.drawString("LEVEL 1", 185, 330);
+		g.drawString("Press '1'", 185, 360);
+
+		// Draw Level 2 Box
+		g.setColor(Color.GRAY);
+		g.fillRect(500, 250, 150, 150);
+		g.setColor(Color.WHITE);
+		g.drawRect(500, 250, 150, 150);
+		g.drawString("LEVEL 2", 535, 330);
+		g.drawString("Press '2'", 535, 360);
 	}
 
-	public void drawPauseScreen(Graphics g) {
-
+	private void drawPauseScreen(Graphics g) {
+		g.setColor(new Color(0, 0, 0, 150)); // Semi-transparent black box
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.BOLD, 50));
+		g.drawString("PAUSED", 300, 300);
+		g.setFont(new Font("Arial", Font.PLAIN, 20));
+		g.drawString("Press ESC to Resume", 300, 400);
 	}
 
-	public void drawDeathScreen(Graphics g) {
+	private void drawDeathScreen(Graphics g) {
+		g.setColor(new Color(200, 0, 0, 150)); // Semi-transparent red
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.BOLD, 60));
+		g.drawString("YOU DIED", 250, 250);
+
+		g.setFont(new Font("Arial", Font.PLAIN, 30));
+		g.drawString("Press 'R' to Restart Level", 230, 350);
 	}
 
-	public void drawWinScreen(Graphics g) {
+	private void drawNextLevel(Graphics g) {
+		g.setColor(new Color(0, 200, 0, 150)); // Semi-transparent green
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.BOLD, 50));
+		g.drawString("LEVEL COMPLETE!", 180, 250);
+
+		g.setFont(new Font("Arial", Font.PLAIN, 30));
+		g.drawString("Press 'N' to go to the Next Level", 180, 350);
+	}
+
+	private void drawWinScreen(Graphics g) {
+		g.setColor(new Color(0, 200, 0, 150)); // Semi-transparent green
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.BOLD, 50));
+		g.drawString("You Win!", 250, 250);
+
+		g.setFont(new Font("Arial", Font.PLAIN, 30));
+		g.drawString("Press 'M' to go to the Main Menu", 180, 350);
 	}
 
 	@Override
@@ -154,6 +227,71 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		Character activePlayer = null;
 		Character p1 = levelManager.getPlayer1();
 		Character p2 = levelManager.getPlayer2();
+
+		// Based on what state it is, what buttons can the user click?
+		if (currentState == GameState.MAIN_MENU) {
+			if (key == KeyEvent.VK_ENTER) {
+				currentState = GameState.MODE_SELECT;
+			}
+			return;
+		}
+		if (currentState == GameState.PLAYING) {
+			if (key == KeyEvent.VK_ESCAPE) {
+				currentState = GameState.PAUSED;
+				return;//so the characters don't move when it is paused
+			}	
+		}
+		if (currentState == GameState.PAUSED) {
+			if (key == KeyEvent.VK_ESCAPE) {
+				currentState = GameState.PLAYING;
+			}
+			return;
+		}
+		if (currentState == GameState.MODE_SELECT) {
+			if (key == KeyEvent.VK_1) {
+				isSinglePlayer = true;
+				// make it go to level picker from here
+				currentState = GameState.LEVEL_SELECT;
+			} else if (key == KeyEvent.VK_2) {
+				isSinglePlayer = false;
+				// make it go to level picker from here
+				currentState = GameState.LEVEL_SELECT;
+			}
+			return;
+		}
+		if(currentState == GameState.LEVEL_SELECT) {
+			if(key == KeyEvent.VK_1) {
+				levelManager.setCurrentLevelIndex(0);
+				levelManager.loadCurrentLevel();
+				currentState = GameState.PLAYING;
+			}else if(key == KeyEvent.VK_2) {
+				levelManager.setCurrentLevelIndex(1);
+				levelManager.loadCurrentLevel();
+				currentState = GameState.PLAYING;
+			}
+			return;
+		}
+		if (currentState == GameState.DEATH_SCREEN) {
+			if (key == KeyEvent.VK_R) {
+				resetLevel();
+				currentState = GameState.PLAYING;
+			}return;
+		}
+		if (currentState == GameState.NEXT_LEVEL) {
+			if (key == KeyEvent.VK_N) {
+				leftPressed = false;
+				rightPressed = false;
+				levelManager.nextLevel();
+				levelManager.loadCurrentLevel();
+				currentState = GameState.PLAYING;
+			}return;
+		}
+		if (currentState == GameState.WIN_SCREEN) {
+			if (key == KeyEvent.VK_M) {
+				currentState = GameState.MAIN_MENU;
+			}
+			return;
+		}
 
 		if (key == KeyEvent.VK_SPACE) {
 			if (this.isSinglePlayer) {
@@ -265,7 +403,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			// Run interaction loop to look at all tiles
 			boolean playerDied = checkTileInteractions(p1, p2, tiles);
 			if (playerDied) {
-				resetLevel();
+				currentState = GameState.DEATH_SCREEN;
 				return;
 			}
 			if (this.getWidth() > 0 && this.getHeight() > 0) {
@@ -275,7 +413,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				boolean p2OutOfBounds = (p2 != null) && (p2.getX() > this.getWidth() || p2.getY() > this.getHeight());
 
 				if (p1OutOfBounds || p2OutOfBounds) {
-					resetLevel();
+					currentState = GameState.DEATH_SCREEN;
 					return;
 				}
 			}
@@ -517,14 +655,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				}
 			}
 			if (p1AtDoor && p2AtDoor) {
-
-				leftPressed = false;
-				rightPressed = false;
 				if (levelManager.getCurrentLevelIndex() == levelManager.getBlueprints().size() - 1) {
-					System.out.println("You finished the game!");
+					currentState = GameState.WIN_SCREEN;
+					return;
 				}
-				levelManager.nextLevel();
-				levelManager.loadCurrentLevel();
+				currentState = GameState.NEXT_LEVEL;
 				return;
 			}
 

@@ -25,6 +25,9 @@ public class Level {
 		return currentLevelIndex;
 	}
 	public ArrayList<char[][]> getBlueprints(){return blueprints;}
+	public void setCurrentLevelIndex(int index) {
+		currentLevelIndex = index;
+	}
 	
 	//Methods
 	private void initializeLevels() {
