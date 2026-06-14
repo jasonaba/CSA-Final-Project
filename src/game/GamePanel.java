@@ -93,22 +93,161 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 
 	}
+	
+	//Drawing different menus (AI CREATED THIS)
 
 	private void drawMainMenu(Graphics g) {
 		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, this.getWidth(), this.getHeight()); // Black background
+		g.fillRect(0, 0, this.getWidth(), this.getHeight()); // Pure black background
 
+		// --- RETRO TITLE ---
+		Font titleFont = new Font("Monospaced", Font.BOLD, 50);
+		g.setFont(titleFont);
+		
+		// 1. Draw the drop shadows first (Offset by +5 on X and Y)
+		g.setColor(new Color(0, 100, 0)); // Dark Green shadow
+		g.drawString("Alkalinity & Toxicity", 85, 205);
+		
+		// 2. Draw the bright neon text on top
+		g.setColor(Color.GREEN);
+		g.drawString("Alkalinity & Toxicity", 80, 200);
+
+		// --- BLINKING PROMPT EFFECT ---
+		// We can make it look like a retro terminal prompt
+		g.setFont(new Font("Monospaced", Font.BOLD, 30));
 		g.setColor(Color.WHITE);
-		g.setFont(new Font("Arial", Font.BOLD, 50));
-		g.drawString("Solo Duo:", 275, 200); // Title
-		g.drawString("Alkalinity & Toxicity", 150, 300);
-
-		g.setFont(new Font("Arial", Font.PLAIN, 30));
-		g.drawString("Press ENTER to Start", 250, 400);
-
+		g.drawString("> Press ENTER to Start <", 170, 400);
 	}
 
-	private void drawGameplay(Graphics g) {
+	private void drawModeSelect(Graphics g) {
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 40));
+		g.setColor(Color.DARK_GRAY);
+		g.drawString("SELECT GAME MODE", 205, 155); // Shadow
+		g.setColor(Color.WHITE);
+		g.drawString("SELECT GAME MODE", 200, 150);
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 25));
+		
+		// Single Player Retro Box
+		g.setColor(Color.DARK_GRAY);
+		g.drawRect(95, 255, 610, 50); // Shadow outline
+		g.setColor(Color.GREEN);
+		g.drawRect(90, 250, 610, 50); // Neon Box
+		g.drawString("[1] Single Player (Swap: SPACE)", 110, 285);
+
+		// Co-op Retro Box
+		g.setColor(Color.DARK_GRAY);
+		g.drawRect(95, 355, 610, 50); // Shadow outline
+		g.setColor(new Color(180, 50, 255)); // Bright Purple
+		g.drawRect(90, 350, 610, 50); // Neon Box
+		g.drawString("[2] Co-op Mode (WASD & Arrows)", 110, 385);
+	}
+
+	private void drawLevelSelect(Graphics g) {
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 40));
+		g.setColor(Color.WHITE);
+		g.drawString("- LEVEL SELECT -", 220, 100);
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 20));
+		g.setColor(Color.GREEN);
+		g.drawString("> Enter Level Number:", 250, 160);
+
+		// Draw Level 1 Chunky Button
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(160, 260, 150, 150); // Deep shadow
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(150, 250, 150, 150); // Main Button block
+		g.setColor(Color.WHITE);
+		g.drawRect(150, 250, 150, 150); 
+		g.drawRect(152, 252, 146, 146); // Double outline for thickness
+		
+		g.setColor(Color.BLACK);
+		g.drawString("LEVEL 1", 185, 310);
+		g.setColor(Color.DARK_GRAY);
+		g.drawString("[Press 1]", 170, 350);
+
+		// Draw Level 2 Chunky Button
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(510, 260, 150, 150); // Deep shadow
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(500, 250, 150, 150); // Main Button block
+		g.setColor(Color.WHITE);
+		g.drawRect(500, 250, 150, 150);
+		g.drawRect(502, 252, 146, 146); // Double outline
+		
+		g.setColor(Color.BLACK);
+		g.drawString("LEVEL 2", 535, 310);
+		g.setColor(Color.DARK_GRAY);
+		g.drawString("[Press 2]", 520, 350);
+	}
+
+	private void drawPauseScreen(Graphics g) {
+		g.setColor(new Color(0, 0, 0, 180)); // Slightly darker fade
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		
+		g.setFont(new Font("Monospaced", Font.BOLD, 60));
+		g.setColor(Color.BLACK);
+		g.drawString("PAUSED", 295, 305); // Shadow
+		g.setColor(Color.YELLOW); // Retro yellow for pause screens
+		g.drawString("PAUSED", 290, 300);
+		
+		g.setFont(new Font("Monospaced", Font.BOLD, 25));
+		g.setColor(Color.WHITE);
+		g.drawString("> Press ESC to Resume <", 230, 400);
+	}
+
+	private void drawDeathScreen(Graphics g) {
+		g.setColor(new Color(150, 0, 0, 180)); // Dark red fade
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 70));
+		g.setColor(Color.BLACK);
+		g.drawString("SYSTEM FAILURE", 105, 255); // Shadow
+		g.setColor(Color.WHITE);
+		g.drawString("SYSTEM FAILURE", 100, 250);
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 30));
+		g.setColor(Color.YELLOW);
+		g.drawString("> Press 'R' to Reboot <", 190, 350);
+	}
+
+	private void drawNextLevel(Graphics g) {
+		g.setColor(new Color(0, 100, 0, 180)); // Dark green fade
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 55));
+		g.setColor(Color.BLACK);
+		g.drawString("SECTOR CLEARED", 165, 255); // Shadow
+		g.setColor(Color.WHITE);
+		g.drawString("SECTOR CLEARED", 160, 250);
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 30));
+		g.setColor(Color.YELLOW);
+		g.drawString("> Press 'N' to Advance <", 180, 350);
+	}
+
+	private void drawWinScreen(Graphics g) {
+		g.setColor(new Color(0, 0, 0, 220)); // Very dark fade for the final win
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 60));
+		g.setColor(Color.DARK_GRAY);
+		g.drawString("MISSION COMPLETE", 115, 255); // Shadow
+		g.setColor(Color.GREEN);
+		g.drawString("MISSION COMPLETE", 110, 250);
+
+		g.setFont(new Font("Monospaced", Font.BOLD, 25));
+		g.setColor(Color.WHITE);
+		g.drawString("> Press 'M' to return to Main Menu <", 120, 350);
+	}
+
+    private void drawGameplay(Graphics g) {
 		// loop through all active tiles and make them draw themselves
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
 
@@ -124,96 +263,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			p1.draw(g);
 		if (p2 != null)
 			p2.draw(g);
-	}
-
-	private void drawModeSelect(Graphics g) {
-		g.setColor(Color.DARK_GRAY);
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Arial", Font.BOLD, 40));
-		g.drawString("SELECT GAME MODE", 180, 150);
-
-		g.setFont(new Font("Arial", Font.PLAIN, 25));
-		g.setColor(Color.GREEN);
-		g.drawString("Press '1' for Single Player (Swap with SPACE)", 130, 300);
-
-		g.setColor(new Color(150, 0, 255)); // Purple
-		g.drawString("Press '2' for Co-op (WASD & Arrows)", 180, 400);
-	}
-
-	private void drawLevelSelect(Graphics g) {
-		g.setColor(Color.DARK_GRAY);
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Arial", Font.BOLD, 40));
-		g.drawString("LEVEL SELECT", 250, 100);
-
-		g.setFont(new Font("Arial", Font.PLAIN, 20));
-		g.drawString("Press the number key to load the level:", 220, 150);
-
-		// Draw Level 1 Box
-		g.setColor(Color.GRAY);
-		g.fillRect(150, 250, 150, 150);
-		g.setColor(Color.WHITE);
-		g.drawRect(150, 250, 150, 150);
-		g.drawString("LEVEL 1", 185, 330);
-		g.drawString("Press '1'", 185, 360);
-
-		// Draw Level 2 Box
-		g.setColor(Color.GRAY);
-		g.fillRect(500, 250, 150, 150);
-		g.setColor(Color.WHITE);
-		g.drawRect(500, 250, 150, 150);
-		g.drawString("LEVEL 2", 535, 330);
-		g.drawString("Press '2'", 535, 360);
-	}
-
-	private void drawPauseScreen(Graphics g) {
-		g.setColor(new Color(0, 0, 0, 150)); // Semi-transparent black box
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Arial", Font.BOLD, 50));
-		g.drawString("PAUSED", 300, 300);
-		g.setFont(new Font("Arial", Font.PLAIN, 20));
-		g.drawString("Press ESC to Resume", 300, 400);
-	}
-
-	private void drawDeathScreen(Graphics g) {
-		g.setColor(new Color(200, 0, 0, 150)); // Semi-transparent red
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Arial", Font.BOLD, 60));
-		g.drawString("YOU DIED", 250, 250);
-
-		g.setFont(new Font("Arial", Font.PLAIN, 30));
-		g.drawString("Press 'R' to Restart Level", 230, 350);
-	}
-
-	private void drawNextLevel(Graphics g) {
-		g.setColor(new Color(0, 200, 0, 150)); // Semi-transparent green
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Arial", Font.BOLD, 50));
-		g.drawString("LEVEL COMPLETE!", 180, 250);
-
-		g.setFont(new Font("Arial", Font.PLAIN, 30));
-		g.drawString("Press 'N' to go to the Next Level", 180, 350);
-	}
-
-	private void drawWinScreen(Graphics g) {
-		g.setColor(new Color(0, 200, 0, 150)); // Semi-transparent green
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Arial", Font.BOLD, 50));
-		g.drawString("You Win!", 250, 250);
-
-		g.setFont(new Font("Arial", Font.PLAIN, 30));
-		g.drawString("Press 'M' to go to the Main Menu", 180, 350);
 	}
 
 	@Override
