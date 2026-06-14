@@ -12,7 +12,7 @@ public class Door implements Tile {
 	private int x, y, width, height;
 	private boolean isOpen;
 	private String color; // Light or Dark
-	private static Image darkClosed, darkOpened, lightClosed, lightOpened;
+	private static Image purpleClosed, purpleOpened, greenClosed, greenOpened;
 
 	// Constructor
 	public Door(int x, int y, int width, int height, String color) {
@@ -58,10 +58,10 @@ public class Door implements Tile {
 
 	public static void loadImages() {
 		try {
-			darkClosed = ImageIO.read(new File("images/Dark_Door.png"));
-			darkOpened = ImageIO.read(new File("images/Opened_Dark_Door.png"));
-			lightClosed = ImageIO.read(new File("images/Light_Door.png"));
-			lightOpened = ImageIO.read(new File("images/Opened_Light_Door.png"));
+			purpleClosed = ImageIO.read(new File("images/Purple_Door.png"));
+			purpleOpened = ImageIO.read(new File("images/Purple_Door_Opened.png"));
+			greenClosed = ImageIO.read(new File("images/Green_Door.png"));
+			greenOpened = ImageIO.read(new File("images/Green_Door_Opened.png"));
 			System.out.println("All Door images loaded successfully!");
 
 		} catch (IOException e) {
@@ -81,20 +81,20 @@ public class Door implements Tile {
 	@Override
 	public void draw(Graphics g) {
 		Image currentSprite = null;
-		if (darkClosed != null && darkOpened != null && lightClosed != null && lightOpened != null) {
+		if (purpleClosed != null && purpleOpened != null && greenClosed != null && greenOpened != null) {
 
 			if ("Purple".equals(color)) {
 				if (isOpen) {
-					currentSprite = darkOpened;
+					currentSprite = purpleOpened;
 				} else {
-					currentSprite = darkClosed;
+					currentSprite = purpleClosed;
 				}
 			}
 			if ("Green".equals(color)) {
 				if (isOpen) {
-					currentSprite = lightOpened;
+					currentSprite = greenOpened;
 				} else {
-					currentSprite = lightClosed;
+					currentSprite = greenClosed;
 				}
 			}
 			if (currentSprite != null) {

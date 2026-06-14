@@ -102,7 +102,7 @@ public class Button implements Tile, Switchable {
 			buttonFrames[1] = sheet.getSubimage(0, 32, 32, 32); // Bottom frame (On)
 
 		} catch (IOException e) {
-			System.out.println("Error: Could not load images/button.png. Using backup colors.");
+			System.out.println("Error: Could not load images/Button.png. Using backup colors.");
 		}
 	}
 }

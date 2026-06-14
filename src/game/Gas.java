@@ -9,13 +9,13 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Gem implements Tile {
+public class Gas implements Tile {
 	private int x, y, width, height;
 	private String color;
-	private static Image purpleSprite, greenSprite;
+	private static Image greenSprite, purpleSprite;
 
-	// Constructors
-	public Gem(int x, int y, int width, int height, String color) {
+	// Constructor
+	public Gas(int x, int y, int width, int height, String color) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -24,10 +24,6 @@ public class Gem implements Tile {
 	}
 
 	// Getters
-	public String getColor() {
-		return color;
-	}
-
 	@Override
 	public int getX() {
 		return x;
@@ -47,6 +43,10 @@ public class Gem implements Tile {
 	public int getHeight() {
 		return height;
 	}
+	
+	public String getColor() {
+		return color;
+	}
 
 	// Methods
 	@Override
@@ -54,16 +54,20 @@ public class Gem implements Tile {
 		return this.getBounds().intersects(c.getBounds());
 	}
 
-	public boolean tryCollect(Character c) {
-		return isColliding(c) && c.getColor().equals(this.color);
+	public boolean kills(Character c) {
+		if (isColliding(c)) {
+			if (!c.getColor().equals(this.color))
+				return true;
+		}
+		return false;
 	}
-
+	
 	public static void loadImages() {
 		try {
 
-			greenSprite = ImageIO.read(new File("images/GreenGem.png"));
-			purpleSprite = ImageIO.read(new File("images/PurpleGem.png"));
-			System.out.println("Gem images loaded successfully!");
+			greenSprite = ImageIO.read(new File("images/GreenGas.png"));
+			purpleSprite = ImageIO.read(new File("images/PurpleGas.png"));
+			System.out.println("Gas images loaded successfully!");
 		} catch (IOException e) {
 			System.out.println("Couldn't load Gem images");
 		}

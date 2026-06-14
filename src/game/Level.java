@@ -118,10 +118,10 @@ public class Level {
 					activeTiles.add(new Door(xPixel, yPixel, 40, 40, "Green"));
 				}
 				else if(symbol=='X') {
-					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Purple"));
+					activeTiles.add(new Gas(xPixel, yPixel, 40, 40, "Purple"));
 				}
 				else if(symbol=='Y') {
-					activeTiles.add(new Lava(xPixel, yPixel, 40, 40, "Green"));
+					activeTiles.add(new Gas(xPixel, yPixel, 40, 40, "Green"));
 				}
 				else if (symbol == 'O') {
 	                activeTiles.add(new Button(xPixel, yPixel, 40, 40));

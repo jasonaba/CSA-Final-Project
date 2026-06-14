@@ -23,6 +23,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		Button.loadImages();
 		Lever.loadImages();
 		Door.loadImages();
+		Gem.loadImages();
+		Gas.loadImages();
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
 		this.setBackground(Color.LIGHT_GRAY);
 
@@ -33,7 +35,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		leftPressed = false;
 		rightPressed = false;
 
-		// tracks if any gems are remaning
+		// tracks if any gems are remaining
 		this.greenGemsRemaining = false;
 		this.purpleGemsRemaining = false;
 
@@ -280,8 +282,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 
 			// Player 1 Lava Collisions
-			if (p1 != null && t instanceof Lava && t.isColliding(p1)) {
-				Lava l = (Lava) t;
+			if (p1 != null && t instanceof Gas && t.isColliding(p1)) {
+				Gas l = (Gas) t;
 				if (!p1.getColor().equals(l.getColor())) {
 					// kill player 1
 					return true;// to stop processing the frame and restart
@@ -298,8 +300,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 
 			// Player 2 Lava Collisions
-			if (p2 != null && t instanceof Lava && t.isColliding(p2)) {
-				Lava l = (Lava) t;
+			if (p2 != null && t instanceof Gas && t.isColliding(p2)) {
+				Gas l = (Gas) t;
 				if (!p2.getColor().equals(l.getColor())) {
 					// kill player 1
 					
