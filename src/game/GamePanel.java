@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -242,6 +245,34 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.drawString("LEVEL 3", 595, 310);
 		g.setColor(Color.DARK_GRAY);
 		g.drawString("[Press 3]", 580, 350);
+
+		// --- Box 4 (Centered beneath 1 and 2) ---
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(220, 440, 150, 150); // Deep shadow
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(210, 430, 150, 150); // Main Button block
+		g.setColor(Color.WHITE);
+		g.drawRect(210, 430, 150, 150);
+		g.drawRect(212, 432, 146, 146); // Double outline
+
+		g.setColor(Color.BLACK);
+		g.drawString("LEVEL 4", 245, 490);
+		g.setColor(Color.DARK_GRAY);
+		g.drawString("[Press 4]", 230, 530);
+
+		// --- Box 5 (Centered beneath 2 and 3) ---
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(455, 440, 150, 150); // Deep shadow
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(445, 430, 150, 150); // Main Button block
+		g.setColor(Color.WHITE);
+		g.drawRect(445, 430, 150, 150);
+		g.drawRect(447, 432, 146, 146); // Double outline
+
+		g.setColor(Color.BLACK);
+		g.drawString("LEVEL 5", 480, 490);
+		g.setColor(Color.DARK_GRAY);
+		g.drawString("[Press 5]", 465, 530);
 	}
 
 	private void drawPauseScreen(Graphics g) {
@@ -350,6 +381,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 			// Top left: Teach them about the doors
 			g.drawString("Reach the doors together!", 300, 100);
+		}
+		else if(levelManager.getCurrentLevelIndex()==5) {
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2d.setFont(new Font("SansSerif", Font.BOLD, 40));
+
+			int xPos = 180;
+			int yPos = 430;
+			String message = "Jesus Christ loves you";
+
+			Color gamePurple = new Color(138, 43, 226);
+			Color gameGreen = new Color(50, 205, 50);
+			GradientPaint textGradient = new GradientPaint(xPos, yPos, gamePurple, xPos + 400, yPos, gameGreen);
+
+			g2d.setPaint(textGradient);
+			g2d.drawString(message, xPos, yPos);
 		}
 		// loop through all active tiles and make them draw themselves
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
@@ -460,6 +507,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				currentState = GameState.PLAYING;
 			} else if (key == KeyEvent.VK_3) {
 				levelManager.setCurrentLevelIndex(2);
+				levelManager.loadCurrentLevel();
+				currentState = GameState.PLAYING;
+			}else if (key == KeyEvent.VK_4) {
+				levelManager.setCurrentLevelIndex(3);
+				levelManager.loadCurrentLevel();
+				currentState = GameState.PLAYING;
+			}else if (key == KeyEvent.VK_5) {
+				levelManager.setCurrentLevelIndex(4);
+				levelManager.loadCurrentLevel();
+				currentState = GameState.PLAYING;
+			}else if (key == KeyEvent.VK_0) {
+				levelManager.setCurrentLevelIndex(5);
 				levelManager.loadCurrentLevel();
 				currentState = GameState.PLAYING;
 			}
