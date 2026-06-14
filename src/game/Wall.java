@@ -46,8 +46,7 @@ public class Wall implements Tile {
 
 	@Override
 	/**
-	 * Checks if the wall is colliding with the character using Axis-Aligned
-	 * Bounding Box Collisions
+	 * Checks if colliding with said character (c)
 	 */
 	public boolean isColliding(Character c) {
 
@@ -74,7 +73,6 @@ public class Wall implements Tile {
 	public static void loadImages(){
 		try {
 			wallSprite = ImageIO.read(new File("images/Wall.png"));
-			System.out.println("Wall images loaded successfully!");
 		} catch (IOException e) {
 			System.out.println("Error: Could not load images/Wall.png. Using backup gray walls.");
 		}

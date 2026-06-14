@@ -42,9 +42,8 @@ public class Lever implements Tile, Switchable {
 	public static void loadImages() {
 		try {
 			leverSprite = ImageIO.read(new File("images/Lever.png"));
-			System.out.println("Lever image loaded successfully!");
 		} catch (IOException e) {
-			System.out.println("Couldn't load Lever image");
+			System.out.println("Couldn't load Lever image. Using backup colors.");
 		}
 	}
 

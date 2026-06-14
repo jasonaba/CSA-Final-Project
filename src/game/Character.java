@@ -61,7 +61,7 @@ public class Character {
 			frames[2] = sheet.getSubimage(0, 32, 32, 32); // Bottom Left (Walk 2)
 			frames[3] = sheet.getSubimage(32, 32, 32, 32); // Bottom Right (Jump)*/
 		} catch (IOException e) {
-			System.out.println("Unable to load character image");
+			System.out.println("Unable to load character image. Using backup colors.");
 			e.printStackTrace();
 		}
 	}

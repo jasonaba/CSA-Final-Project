@@ -67,9 +67,8 @@ public class Gas implements Tile {
 
 			greenSprite = ImageIO.read(new File("images/GreenGas.png"));
 			purpleSprite = ImageIO.read(new File("images/PurpleGas.png"));
-			System.out.println("Gas images loaded successfully!");
 		} catch (IOException e) {
-			System.out.println("Couldn't load Gem images");
+			System.out.println("Couldn't load Gas images. Using backup colors.");
 		}
 	}
 

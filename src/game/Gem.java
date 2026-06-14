@@ -60,12 +60,10 @@ public class Gem implements Tile {
 
 	public static void loadImages() {
 		try {
-
 			greenSprite = ImageIO.read(new File("images/GreenGem.png"));
 			purpleSprite = ImageIO.read(new File("images/PurpleGem.png"));
-			System.out.println("Gem images loaded successfully!");
 		} catch (IOException e) {
-			System.out.println("Couldn't load Gem images");
+			System.out.println("Couldn't load Gem images. Using backup colors.");
 		}
 	}
 

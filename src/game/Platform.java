@@ -60,8 +60,7 @@ public class Platform implements Tile {
 
 	@Override
 	/**
-	 * Checks if the wall is colliding with the character using Axis-Aligned
-	 * Bounding Box Collisions
+	 * Checks if colliding with said character (c)
 	 */
 	public boolean isColliding(Character c) {
 		if (!isOn) {
@@ -95,7 +94,6 @@ public class Platform implements Tile {
 	public static void loadImages() {
 		try {
 			platformSprite = ImageIO.read(new File("images/Platform.jpg"));
-			System.out.println("Platform images loaded successfully!");
 		} catch (IOException e) {
 			System.out.println("Error: Could not load images/Wall.png. Using backup gray walls.");
 		}

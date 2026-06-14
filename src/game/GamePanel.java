@@ -2,6 +2,7 @@ package game;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,13 @@ import javax.swing.Timer;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
+
+	public enum GameState {// To track what state the game is in
+		MAIN_MENU, MODE_SELECT, LEVEL_SELECT, PLAYING, PAUSED, DEATH_SCREEN, WIN_SCREEN
+	}
+
+	private GameState currentState;
+
 	private Level levelManager;// controls everything to do with the levels
 	private Timer gameClock;// for the loop
 	private boolean isSinglePlayer, controllingPlayerOne, leftPressed, rightPressed, greenGemsRemaining,
@@ -27,6 +35,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		Gas.loadImages();
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
 		this.setBackground(Color.LIGHT_GRAY);
+		currentState = GameState.MAIN_MENU;
 
 		this.isSinglePlayer = false;
 		controllingPlayerOne = true;// tracks in one-player mode what character is being controlled
@@ -55,6 +64,48 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
+		// Do different things based on the game's current state
+		switch (currentState) {
+		case DEATH_SCREEN:
+			this.drawDeathScreen(g);
+			break;
+		case LEVEL_SELECT:
+			this.drawLevelSelect(g);
+			break;
+		case MAIN_MENU:
+			drawMainMenu(g);
+			break;
+		case MODE_SELECT:
+			drawModeSelect(g);
+			break;
+		case PAUSED:
+			this.drawPauseScreen(g);
+			break;
+		case PLAYING:
+			drawGameplay(g);
+			break;
+		case WIN_SCREEN:
+			this.drawWinScreen(g);
+			break;
+		}
+
+	}
+
+	public void drawMainMenu(Graphics g) {
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight()); // Black background
+
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Arial", Font.BOLD, 50));
+		g.drawString("Solo Duo:", 275, 200); // Title
+		g.drawString("Alkalinity & Toxicity", 150, 300);
+
+		g.setFont(new Font("Arial", Font.PLAIN, 30));
+		g.drawString("Press ENTER to Start", 250, 400);
+
+	}
+
+	public void drawGameplay(Graphics g) {
 		// loop through all active tiles and make them draw themselves
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
 
@@ -70,6 +121,26 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			p1.draw(g);
 		if (p2 != null)
 			p2.draw(g);
+	}
+
+	public void drawModeSelect(Graphics g) {
+
+	}
+
+	public void drawLevelSelect(Graphics g) {
+
+	}
+
+	public void drawPauseScreen(Graphics g) {
+
+	}
+
+	public void drawDeathScreen(Graphics g) {
+
+	}
+
+	public void drawWinScreen(Graphics g) {
+
 	}
 
 	@Override
@@ -172,41 +243,45 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Character p1 = levelManager.getPlayer1();
-		Character p2 = levelManager.getPlayer2();
-		ArrayList<Tile> tiles = levelManager.getActiveTiles();
-		
-		// Character movement when single player
-		singlePlayerMovement(p1, p2);
 
-		// Apply Barrier Collisions
-		updatePhysics(p1, tiles);
-		updatePhysics(p2, tiles);
+		// All of this runs ONLY IF the user is playing
+		if (currentState == GameState.PLAYING) {
+			Character p1 = levelManager.getPlayer1();
+			Character p2 = levelManager.getPlayer2();
+			ArrayList<Tile> tiles = levelManager.getActiveTiles();
 
-		// Prepare Map to Check for Collisions
-		prepareMap(tiles);
+			// Character movement when single player
+			singlePlayerMovement(p1, p2);
 
-		// Button, Gem, and Lava collisions
+			// Apply Barrier Collisions
+			updatePhysics(p1, tiles);
+			updatePhysics(p2, tiles);
 
-		// Run interaction loop to look at all tiles
-		boolean playerDied = checkTileInteractions(p1, p2, tiles);
-		if (playerDied) {
-			resetLevel();
-			return;
-		}
-		if (this.getWidth() > 0 && this.getHeight() > 0) {
+			// Prepare Map to Check for Collisions
+			prepareMap(tiles);
 
-			// Individually check if p1 and p2 are OOB to make level restart
-			boolean p1OutOfBounds = (p1 != null) && (p1.getX() > this.getWidth() || p1.getY() > this.getHeight());
-			boolean p2OutOfBounds = (p2 != null) && (p2.getX() > this.getWidth() || p2.getY() > this.getHeight());
+			// Button, Gem, and Lava collisions
 
-			if (p1OutOfBounds || p2OutOfBounds) {
+			// Run interaction loop to look at all tiles
+			boolean playerDied = checkTileInteractions(p1, p2, tiles);
+			if (playerDied) {
 				resetLevel();
 				return;
 			}
+			if (this.getWidth() > 0 && this.getHeight() > 0) {
+
+				// Individually check if p1 and p2 are OOB to make level restart
+				boolean p1OutOfBounds = (p1 != null) && (p1.getX() > this.getWidth() || p1.getY() > this.getHeight());
+				boolean p2OutOfBounds = (p2 != null) && (p2.getX() > this.getWidth() || p2.getY() > this.getHeight());
+
+				if (p1OutOfBounds || p2OutOfBounds) {
+					resetLevel();
+					return;
+				}
+			}
+			// Check if the player(s) won
+			winState(p1, p2, tiles);
 		}
-		// Check if the player(s) won
-		winState(p1, p2, tiles);
 
 		repaint();
 
@@ -304,7 +379,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				Gas l = (Gas) t;
 				if (!p2.getColor().equals(l.getColor())) {
 					// kill player 1
-					
+
 					return true;// to stop processing the frame and restart
 				}
 			}
@@ -445,9 +520,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 				leftPressed = false;
 				rightPressed = false;
-				if(levelManager.getCurrentLevelIndex()==levelManager.getBlueprints().size()-1) {
+				if (levelManager.getCurrentLevelIndex() == levelManager.getBlueprints().size() - 1) {
 					System.out.println("You finished the game!");
-					return;
 				}
 				levelManager.nextLevel();
 				levelManager.loadCurrentLevel();

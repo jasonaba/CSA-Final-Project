@@ -62,7 +62,6 @@ public class Door implements Tile {
 			purpleOpened = ImageIO.read(new File("images/Purple_Door_Opened.png"));
 			greenClosed = ImageIO.read(new File("images/Green_Door.png"));
 			greenOpened = ImageIO.read(new File("images/Green_Door_Opened.png"));
-			System.out.println("All Door images loaded successfully!");
 
 		} catch (IOException e) {
 			System.out.println("Could not load door images. Using backup colors.");
