@@ -42,12 +42,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
 		try {
 			// Make sure the file name matches exactly where it is in your project!
-			backgroundImage = ImageIO.read(new File("images/lab_bg.png")); 
+			backgroundImage = ImageIO.read(new File("images/lab_bg.png"));
 		} catch (IOException e) {
 			System.out.println("Could not load background image!");
 			e.printStackTrace();
 		}
-		
+
 		currentState = GameState.MAIN_MENU;
 
 		this.isSinglePlayer = false;
@@ -321,9 +321,35 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	private void drawGameplay(Graphics g) {
 		if (backgroundImage != null) {
 			g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), null);
-		}else {
+		} else {
 			g.setColor(Color.DARK_GRAY);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		}
+		// --- DRAW TUTORIAL TEXT (Only on Level 1) ---
+		// Assuming you have a way to check if this is the first level (e.g., level
+		// index 0)
+		if (levelManager.getCurrentLevelIndex() == 0) {
+
+			// Set font and create a faint, semi-transparent white color (Alpha: 80 out of
+			// 255)
+			g.setFont(new Font("Monospaced", Font.BOLD, 21));
+			g.setColor(new Color(255, 255, 255, 80));
+
+			// Bottom left: Teach Player 1 & 2 controls
+			if (!isSinglePlayer) {
+				g.drawString("P1:WASD", 45, 400);
+				g.drawString("P2:ARROWS", 45, 440);
+			} else {
+				g.drawString("W A S D", 45, 400);
+				g.drawString("or Arrows", 45, 440);
+			}
+
+			// Middle right: Teach the color rule near the first hazards
+			g.drawString("Match your color.", 350, 310);
+			g.drawString("Avoid the other!", 350, 350);
+
+			// Top left: Teach them about the doors
+			g.drawString("Reach the doors together!", 300, 100);
 		}
 		// loop through all active tiles and make them draw themselves
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
@@ -340,6 +366,40 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			p1.draw(g);
 		if (p2 != null)
 			p2.draw(g);
+
+		// --- PAUSE PROMPT HUD (Top Right Corner) ---
+		g.setFont(new Font("Monospaced", Font.BOLD, 16));
+		FontMetrics hudMetrics = g.getFontMetrics();
+		String pauseText = "[ESC] Pause";
+
+		// 1. Calculate the sizes
+		int padding = 15; // Distance from the screen edge
+		int textWidth = hudMetrics.stringWidth(pauseText);
+		int textHeight = hudMetrics.getHeight();
+
+		// Create a box slightly larger than the text (5 pixels of padding on all sides)
+		int boxWidth = textWidth + 10;
+		int boxHeight = textHeight + 10;
+
+		// Calculate exactly where the top-left corner of the box should go
+		int boxX = this.getWidth() - boxWidth - padding;
+		int boxY = padding;
+
+		// 2. Draw the box background (Semi-transparent black so you can see through
+		// it!)
+		g.setColor(new Color(0, 0, 0, 150));
+		g.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+		// 3. Draw the crisp white outline around the box
+		g.setColor(Color.WHITE);
+		g.drawRect(boxX, boxY, boxWidth, boxHeight);
+
+		// 4. Draw the actual text inside the box
+		// We add 5 pixels to push it slightly off the box's edges
+		int textX = boxX + 5;
+		int textY = boxY + hudMetrics.getAscent() + 5;
+
+		g.drawString(pauseText, textX, textY);
 	}
 
 	@Override
