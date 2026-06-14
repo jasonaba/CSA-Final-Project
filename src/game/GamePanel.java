@@ -3,13 +3,18 @@ package game;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.Timer;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
@@ -19,11 +24,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	private GameState currentState;
-
+	private Image backgroundImage;
 	private Level levelManager;// controls everything to do with the levels
 	private Timer gameClock;// for the loop
-	private boolean isSinglePlayer, controllingPlayerOne, leftPressed, rightPressed, greenGemsRemaining,
-			purpleGemsRemaining, switchIsActive;
+	private boolean isSinglePlayer, controllingPlayerOne, greenGemsRemaining, purpleGemsRemaining, switchIsActive;
+	// In order to track movement (to get rid of delay)
+	private boolean wPressed, aPressed, dPressed, upPressed, leftPressed, rightPressed;
 
 	public GamePanel() {
 		Wall.loadImages();
@@ -34,7 +40,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		Gem.loadImages();
 		Gas.loadImages();
 		this.setPreferredSize(new Dimension(800, 600));// 800x600 screen
-		this.setBackground(Color.LIGHT_GRAY);
+		try {
+			// Make sure the file name matches exactly where it is in your project!
+			backgroundImage = ImageIO.read(new File("images/lab_bg.png")); 
+		} catch (IOException e) {
+			System.out.println("Could not load background image!");
+			e.printStackTrace();
+		}
+		
 		currentState = GameState.MAIN_MENU;
 
 		this.isSinglePlayer = false;
@@ -93,8 +106,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 
 	}
-	
-	//Drawing different menus (AI CREATED THIS)
+
+	// Drawing different menus (AI CREATED THIS)
 
 	private void drawMainMenu(Graphics g) {
 		g.setColor(Color.BLACK);
@@ -103,17 +116,47 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		// --- RETRO TITLE ---
 		Font titleFont = new Font("Monospaced", Font.BOLD, 50);
 		g.setFont(titleFont);
-		
-		// 1. Draw the drop shadows first (Offset by +5 on X and Y)
-		g.setColor(new Color(0, 100, 0)); // Dark Green shadow
-		g.drawString("Alkalinity & Toxicity", 85, 205);
-		
-		// 2. Draw the bright neon text on top
+
+		// Get FontMetrics to help us perfectly center the text!
+		FontMetrics metrics = g.getFontMetrics(titleFont);
+
+		// LINE 1: "SOLO DUO:"
+		String line1 = "SOLO DUO:";
+		int x1 = (this.getWidth() - metrics.stringWidth(line1)) / 2; // Centers it mathematically
+		g.setColor(Color.DARK_GRAY);
+		g.drawString(line1, x1 + 5, 125); // Shadow
+		g.setColor(Color.WHITE);
+		g.drawString(line1, x1, 120); // Main Text
+
+		// LINE 2: "ALKALINITY & TOXICITY" (Split into 3 pieces)
+		String word1 = "ALKALINITY ";
+		String word2 = "& ";
+		String word3 = "TOXICITY";
+
+		// Calculate the total width to find our starting point
+		int totalWidth = metrics.stringWidth(word1 + word2 + word3);
+		int startX = (this.getWidth() - totalWidth) / 2;
+		int y2 = 220; // Lower down the screen
+
+		// Draw the shadow for all three words at once
+		g.setColor(Color.DARK_GRAY);
+		g.drawString(word1 + word2 + word3, startX + 5, y2 + 5);
+
+		// Draw "ALKALINITY" in Purple
+		g.setColor(new Color(150, 0, 255));
+		g.drawString(word1, startX, y2);
+
+		// Draw "&" in White
+		int currentX = startX + metrics.stringWidth(word1); // Move X to the right
+		g.setColor(Color.WHITE);
+		g.drawString(word2, currentX, y2);
+
+		// Draw "TOXICITY" in Green
+		currentX += metrics.stringWidth(word2); // Move X to the right again
 		g.setColor(Color.GREEN);
-		g.drawString("Alkalinity & Toxicity", 80, 200);
+		g.drawString(word3, currentX, y2);
 
 		// --- BLINKING PROMPT EFFECT ---
-		// We can make it look like a retro terminal prompt
 		g.setFont(new Font("Monospaced", Font.BOLD, 30));
 		g.setColor(Color.WHITE);
 		g.drawString("> Press ENTER to Start <", 170, 400);
@@ -130,7 +173,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.drawString("SELECT GAME MODE", 200, 150);
 
 		g.setFont(new Font("Monospaced", Font.BOLD, 25));
-		
+
 		// Single Player Retro Box
 		g.setColor(Color.DARK_GRAY);
 		g.drawRect(95, 255, 610, 50); // Shadow outline
@@ -158,48 +201,76 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.setColor(Color.GREEN);
 		g.drawString("> Enter Level Number:", 250, 160);
 
-		// Draw Level 1 Chunky Button
+		// --- Box 1 ---
 		g.setColor(Color.DARK_GRAY);
-		g.fillRect(160, 260, 150, 150); // Deep shadow
+		g.fillRect(100, 260, 150, 150); // Deep shadow
 		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect(150, 250, 150, 150); // Main Button block
+		g.fillRect(90, 250, 150, 150); // Main Button block
 		g.setColor(Color.WHITE);
-		g.drawRect(150, 250, 150, 150); 
-		g.drawRect(152, 252, 146, 146); // Double outline for thickness
-		
-		g.setColor(Color.BLACK);
-		g.drawString("LEVEL 1", 185, 310);
-		g.setColor(Color.DARK_GRAY);
-		g.drawString("[Press 1]", 170, 350);
+		g.drawRect(90, 250, 150, 150);
+		g.drawRect(92, 252, 146, 146); // Double outline
 
-		// Draw Level 2 Chunky Button
-		g.setColor(Color.DARK_GRAY);
-		g.fillRect(510, 260, 150, 150); // Deep shadow
-		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect(500, 250, 150, 150); // Main Button block
-		g.setColor(Color.WHITE);
-		g.drawRect(500, 250, 150, 150);
-		g.drawRect(502, 252, 146, 146); // Double outline
-		
 		g.setColor(Color.BLACK);
-		g.drawString("LEVEL 2", 535, 310);
+		g.drawString("LEVEL 1", 125, 310);
 		g.setColor(Color.DARK_GRAY);
-		g.drawString("[Press 2]", 520, 350);
+		g.drawString("[Press 1]", 110, 350);
+
+		// --- Box 2 ---
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(335, 260, 150, 150); // Deep shadow
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(325, 250, 150, 150); // Main Button block
+		g.setColor(Color.WHITE);
+		g.drawRect(325, 250, 150, 150);
+		g.drawRect(327, 252, 146, 146); // Double outline
+
+		g.setColor(Color.BLACK);
+		g.drawString("LEVEL 2", 360, 310);
+		g.setColor(Color.DARK_GRAY);
+		g.drawString("[Press 2]", 345, 350);
+
+		// --- Box 3 ---
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(570, 260, 150, 150); // Deep shadow
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(560, 250, 150, 150); // Main Button block
+		g.setColor(Color.WHITE);
+		g.drawRect(560, 250, 150, 150);
+		g.drawRect(562, 252, 146, 146); // Double outline
+
+		g.setColor(Color.BLACK);
+		g.drawString("LEVEL 3", 595, 310);
+		g.setColor(Color.DARK_GRAY);
+		g.drawString("[Press 3]", 580, 350);
 	}
 
 	private void drawPauseScreen(Graphics g) {
-		g.setColor(new Color(0, 0, 0, 180)); // Slightly darker fade
+		// 1. Draw a semi-transparent black overlay
+		// The '180' is the alpha (transparency) level! 0 is invisible, 255 is solid.
+		g.setColor(new Color(0, 0, 0, 180));
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-		
+		// 2. Draw the PAUSED Title
 		g.setFont(new Font("Monospaced", Font.BOLD, 60));
-		g.setColor(Color.BLACK);
-		g.drawString("PAUSED", 295, 305); // Shadow
-		g.setColor(Color.YELLOW); // Retro yellow for pause screens
-		g.drawString("PAUSED", 290, 300);
-		
-		g.setFont(new Font("Monospaced", Font.BOLD, 25));
 		g.setColor(Color.WHITE);
-		g.drawString("> Press ESC to Resume <", 230, 400);
+		FontMetrics titleMetrics = g.getFontMetrics();
+		String title = "PAUSED";
+		int titleX = (this.getWidth() - titleMetrics.stringWidth(title)) / 2;
+		g.drawString(title, titleX, 250);
+
+		// 3. Draw the interactive prompts
+		g.setFont(new Font("Monospaced", Font.BOLD, 25));
+		g.setColor(Color.LIGHT_GRAY);
+		FontMetrics promptMetrics = g.getFontMetrics();
+
+		String resumeStr = "> Press ESC to Resume <";
+		String menuStr = "> Press M for Main Menu <";
+
+		int resumeX = (this.getWidth() - promptMetrics.stringWidth(resumeStr)) / 2;
+		int menuX = (this.getWidth() - promptMetrics.stringWidth(menuStr)) / 2;
+
+		// Spaced out nicely below the title
+		g.drawString(resumeStr, resumeX, 330);
+		g.drawString(menuStr, menuX, 380);
 	}
 
 	private void drawDeathScreen(Graphics g) {
@@ -247,7 +318,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.drawString("> Press 'M' to return to Main Menu <", 120, 350);
 	}
 
-    private void drawGameplay(Graphics g) {
+	private void drawGameplay(Graphics g) {
+		if (backgroundImage != null) {
+			g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), null);
+		}else {
+			g.setColor(Color.DARK_GRAY);
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+		}
 		// loop through all active tiles and make them draw themselves
 		ArrayList<Tile> tiles = levelManager.getActiveTiles();
 
@@ -273,9 +350,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		Character activePlayer = null;
 		Character p1 = levelManager.getPlayer1();
 		Character p2 = levelManager.getPlayer2();
+		Character activePlayer = null;
 
 		// Based on what state it is, what buttons can the user click?
 		if (currentState == GameState.MAIN_MENU) {
@@ -287,12 +364,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		if (currentState == GameState.PLAYING) {
 			if (key == KeyEvent.VK_ESCAPE) {
 				currentState = GameState.PAUSED;
-				return;//so the characters don't move when it is paused
-			}	
+				return;// so the characters don't move when it is paused
+			}
 		}
 		if (currentState == GameState.PAUSED) {
 			if (key == KeyEvent.VK_ESCAPE) {
 				currentState = GameState.PLAYING;
+			}
+			if (key == KeyEvent.VK_M) {
+				resetLevel();
+				currentState = GameState.MAIN_MENU;
 			}
 			return;
 		}
@@ -308,13 +389,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 			return;
 		}
-		if(currentState == GameState.LEVEL_SELECT) {
-			if(key == KeyEvent.VK_1) {
+		if (currentState == GameState.LEVEL_SELECT) {
+			if (key == KeyEvent.VK_1) {
 				levelManager.setCurrentLevelIndex(0);
 				levelManager.loadCurrentLevel();
 				currentState = GameState.PLAYING;
-			}else if(key == KeyEvent.VK_2) {
+			} else if (key == KeyEvent.VK_2) {
 				levelManager.setCurrentLevelIndex(1);
+				levelManager.loadCurrentLevel();
+				currentState = GameState.PLAYING;
+			} else if (key == KeyEvent.VK_3) {
+				levelManager.setCurrentLevelIndex(2);
 				levelManager.loadCurrentLevel();
 				currentState = GameState.PLAYING;
 			}
@@ -324,16 +409,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			if (key == KeyEvent.VK_R) {
 				resetLevel();
 				currentState = GameState.PLAYING;
-			}return;
+			}
+			return;
 		}
 		if (currentState == GameState.NEXT_LEVEL) {
 			if (key == KeyEvent.VK_N) {
 				leftPressed = false;
 				rightPressed = false;
+				aPressed = false;
+				dPressed = false;
 				levelManager.nextLevel();
 				levelManager.loadCurrentLevel();
 				currentState = GameState.PLAYING;
-			}return;
+			}
+			return;
 		}
 		if (currentState == GameState.WIN_SCREEN) {
 			if (key == KeyEvent.VK_M) {
@@ -344,54 +433,41 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 		if (key == KeyEvent.VK_SPACE) {
 			if (this.isSinglePlayer) {
-				if (p1 != null)
-					p1.stop();
-				if (p2 != null)
-					p2.stop();
-				// Makes other character not automatically move when switching characters
-				leftPressed = false;
-				rightPressed = false;
 
 				// Active Player Indicator
 				controllingPlayerOne = !controllingPlayerOne;
 			}
 			return;
 		}
+		if (currentState == GameState.PLAYING) {
+			// turn on movement input trackers when the button is pressed
+			if (key == KeyEvent.VK_A)
+				aPressed = true;
+			if (key == KeyEvent.VK_D)
+				dPressed = true;
+			if (key == KeyEvent.VK_LEFT)
+				leftPressed = true;
+			if (key == KeyEvent.VK_RIGHT)
+				rightPressed = true;
 
-		// movement inputs for single player
-		if (this.isSinglePlayer) {
-			if (this.controllingPlayerOne) {
-				activePlayer = p1;
-			} else {
-				activePlayer = p2;
-			}
-			if (activePlayer != null) {
-				if (key == KeyEvent.VK_A || key == KeyEvent.VK_LEFT)
-					leftPressed = true;
-				if (key == KeyEvent.VK_D || key == KeyEvent.VK_RIGHT)
-					rightPressed = true;
-				if (key == KeyEvent.VK_W || key == KeyEvent.VK_UP)
+			if (this.isSinglePlayer) {
+				if (this.controllingPlayerOne) {
+					activePlayer = p1;
+				} else {
+					activePlayer = p2;
+				}
+				// Single Player jumping
+				if (activePlayer != null && (key == KeyEvent.VK_W || key == KeyEvent.VK_UP)) {
 					activePlayer.jump();
-			}
-
-		} else {
-			// movement input for two player
-			if (p1 != null) {
-				if (key == KeyEvent.VK_A)
-					p1.moveLeft();
-				if (key == KeyEvent.VK_D)
-					p1.moveRight();
-				if (key == KeyEvent.VK_W)
+				}
+			} else {
+				// Two Player jumping
+				if (p1 != null && key == KeyEvent.VK_W) {
 					p1.jump();
-			}
-
-			if (p2 != null) {
-				if (key == KeyEvent.VK_LEFT)
-					p2.moveLeft();
-				if (key == KeyEvent.VK_RIGHT)
-					p2.moveRight();
-				if (key == KeyEvent.VK_UP)
+				}
+				if (p2 != null && key == KeyEvent.VK_UP) {
 					p2.jump();
+				}
 			}
 		}
 	}
@@ -399,31 +475,61 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
-		Character p1 = levelManager.getPlayer1();
-		Character p2 = levelManager.getPlayer2();
+		// turn off movement input trackers when key is released
+		if (key == KeyEvent.VK_A)
+			aPressed = false;
+		if (key == KeyEvent.VK_D)
+			dPressed = false;
 
-		// Single Player movement inputs
+		if (key == KeyEvent.VK_LEFT)
+			leftPressed = false;
+		if (key == KeyEvent.VK_RIGHT)
+			rightPressed = false;
+	}
+
+	private void processMovement(Character p1, Character p2) {
+		Character activePlayer = null;
+		Character inactivePlayer = null;
+		// movement inputs for single player
 		if (this.isSinglePlayer) {
-			if (key == KeyEvent.VK_A || key == KeyEvent.VK_LEFT)
-				leftPressed = false;
-			if (key == KeyEvent.VK_D || key == KeyEvent.VK_RIGHT)
-				rightPressed = false;
-		}
-
-		// Two Player movement inputs
-		// Stop Player 1 if they let go of key
-		else {
-			if (p1 != null) {
-				if (key == KeyEvent.VK_A || key == KeyEvent.VK_D) {
-					p1.stop();
+			if (this.controllingPlayerOne) {
+				activePlayer = p1;
+				inactivePlayer = p2;
+			} else {
+				activePlayer = p2;
+				inactivePlayer = p1;
+			}
+			if (activePlayer != null) {
+				if ((this.aPressed || this.leftPressed) && !(dPressed || rightPressed)) {
+					activePlayer.moveLeft();
+				} else if ((this.dPressed || this.rightPressed) && !(aPressed || leftPressed))
+					activePlayer.moveRight();
+				else {
+					activePlayer.stop();
 				}
 			}
+			if (inactivePlayer != null) {
+				inactivePlayer.stop();
+			}
 
-			// Stop Player 2 if they let go of key
+		} else {
+			// movement input for two player
+			if (p1 != null) {
+				if (aPressed && !dPressed)
+					p1.moveLeft();
+				else if (dPressed && !aPressed)
+					p1.moveRight();
+				else
+					p1.stop();
+			}
+
 			if (p2 != null) {
-				if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT) {
+				if (leftPressed && !rightPressed)
+					p2.moveLeft();
+				else if (rightPressed && !leftPressed)
+					p2.moveRight();
+				else
 					p2.stop();
-				}
 			}
 		}
 	}
@@ -438,7 +544,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			ArrayList<Tile> tiles = levelManager.getActiveTiles();
 
 			// Character movement when single player
-			singlePlayerMovement(p1, p2);
+			processMovement(p1, p2);
 
 			// Apply Barrier Collisions
 			updatePhysics(p1, tiles);
@@ -472,28 +578,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 		repaint();
 
-	}
-
-	private void singlePlayerMovement(Character p1, Character p2) {
-		Character activePlayer = null;
-		// Character movement if single player (based on boolean horizontal movement
-		// checkers)
-		if (this.isSinglePlayer) {
-			if (this.controllingPlayerOne) {
-				activePlayer = p1;
-			} else {
-				activePlayer = p2;
-			}
-			if (activePlayer != null) {
-				if (leftPressed && !rightPressed) {
-					activePlayer.moveLeft();
-				} else if (rightPressed && !leftPressed) {
-					activePlayer.moveRight();
-				} else {
-					activePlayer.stop();
-				}
-			}
-		}
 	}
 
 	private void prepareMap(ArrayList<Tile> tiles) {
@@ -721,6 +805,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		// Reset key presses so characters spawn standing still
 		leftPressed = false;
 		rightPressed = false;
+		aPressed = false;
+		dPressed = false;
 	}
 
 }
