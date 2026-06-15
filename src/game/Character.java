@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
@@ -43,23 +42,23 @@ public class Character {
 	private void loadSpritesheet() {
 		String filename = "";
 
-		
 		try {
 			if (isPlayerOne) {
 				filename = "images/player1.png";
 			} else {
 				filename = "images/player2.png";
 			}
-			//So we can use Subimage
+			// So we can use Subimage
 			BufferedImage sheet = ImageIO.read(new File(filename));
-			int frameWidth= sheet.getWidth();
+			int frameWidth = sheet.getWidth();
 			int frameHeight = sheet.getHeight();
 			// AP CSA: Slicing the 2x2 array out using 32x32 bounding boxes
-			frames[0] = sheet.getSubimage(0, 0, frameWidth, frameHeight/2); // Top Left (Idle)
-			frames[1] = sheet.getSubimage(0, frameHeight/2, frameWidth, frameHeight/2); // Top Right (Walk 1)
+			frames[0] = sheet.getSubimage(0, 0, frameWidth, frameHeight / 2); // Top Left (Idle)
+			frames[1] = sheet.getSubimage(0, frameHeight / 2, frameWidth, frameHeight / 2); // Top Right (Walk 1)
 			/*
-			frames[2] = sheet.getSubimage(0, 32, 32, 32); // Bottom Left (Walk 2)
-			frames[3] = sheet.getSubimage(32, 32, 32, 32); // Bottom Right (Jump)*/
+			 * frames[2] = sheet.getSubimage(0, 32, 32, 32); // Bottom Left (Walk 2)
+			 * frames[3] = sheet.getSubimage(32, 32, 32, 32); // Bottom Right (Jump)
+			 */
 		} catch (IOException e) {
 			System.out.println("Unable to load character image. Using backup colors.");
 			e.printStackTrace();
@@ -124,12 +123,11 @@ public class Character {
 	 */
 	public void updateX() {
 		x = x + xVel;
-		
-		//Change Direction of sprite
-		if(xVel > 0) {
+
+		// Change Direction of sprite
+		if (xVel > 0) {
 			facingRight = true;
-		}
-		else if (xVel < 0 ) {
+		} else if (xVel < 0) {
 			facingRight = false;
 		}
 	}
@@ -144,31 +142,31 @@ public class Character {
 	}
 
 	public void draw(Graphics g) {
-		//Increase the counter every frame so it animates it
+		// Increase the counter every frame so it animates it
 		animationCounter++;
-		//Choose the right frame to draw
+		// Choose the right frame to draw
 		Image activeFrame = frames[0];
-		
-		if(!isOnFloor){//if falling/not on ground
+
+		if (!isOnFloor) {// if falling/not on ground
 			activeFrame = frames[0];
-		}else if (xVel != 0) {//if moving on the ground
-			if((animationCounter/10)%2 == 0) {
+		} else if (xVel != 0) {// if moving on the ground
+			if ((animationCounter / 10) % 2 == 0) {
 				activeFrame = frames[1];
-			}else {
+			} else {
 				activeFrame = frames[0];
 			}
 		}
-		
-		if(activeFrame != null){
-			if(facingRight) {
+
+		if (activeFrame != null) {
+			if (facingRight) {
 				g.drawImage(activeFrame, x, y, width, height, null);
-			}else {//negative width to flip it around
-				g.drawImage(activeFrame, x+width, y, -width, height, null);
-		}
+			} else {// negative width to flip it around
+				g.drawImage(activeFrame, x + width, y, -width, height, null);
+			}
 		} else {
 			// just in case image is missing
 			if ("Purple".equals(color))
-				g.setColor(new Color(128,0,128));
+				g.setColor(new Color(128, 0, 128));
 
 			else if ("Green".equals(color))
 				g.setColor(Color.green);

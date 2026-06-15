@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	private Timer gameClock;// for the loop
 	private boolean isSinglePlayer, controllingPlayerOne, greenGemsRemaining, purpleGemsRemaining, switchIsActive;
 	// In order to track movement (to get rid of delay)
-	private boolean wPressed, aPressed, dPressed, upPressed, leftPressed, rightPressed;
+	private boolean aPressed, dPressed, leftPressed, rightPressed;
 
 	public GamePanel() {
 		Wall.loadImages();
@@ -381,8 +381,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 			// Top left: Teach them about the doors
 			g.drawString("Reach the doors together!", 300, 100);
-		}
-		else if(levelManager.getCurrentLevelIndex()==5) {
+		} else if (levelManager.getCurrentLevelIndex() == 5) {
 			Graphics2D g2d = (Graphics2D) g;
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2d.setFont(new Font("SansSerif", Font.BOLD, 40));
@@ -509,15 +508,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				levelManager.setCurrentLevelIndex(2);
 				levelManager.loadCurrentLevel();
 				currentState = GameState.PLAYING;
-			}else if (key == KeyEvent.VK_4) {
+			} else if (key == KeyEvent.VK_4) {
 				levelManager.setCurrentLevelIndex(3);
 				levelManager.loadCurrentLevel();
 				currentState = GameState.PLAYING;
-			}else if (key == KeyEvent.VK_5) {
+			} else if (key == KeyEvent.VK_5) {
 				levelManager.setCurrentLevelIndex(4);
 				levelManager.loadCurrentLevel();
 				currentState = GameState.PLAYING;
-			}else if (key == KeyEvent.VK_0) {
+			} else if (key == KeyEvent.VK_0) {
 				levelManager.setCurrentLevelIndex(5);
 				levelManager.loadCurrentLevel();
 				currentState = GameState.PLAYING;

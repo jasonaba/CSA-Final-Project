@@ -43,7 +43,7 @@ public class Gas implements Tile {
 	public int getHeight() {
 		return height;
 	}
-	
+
 	public String getColor() {
 		return color;
 	}
@@ -61,7 +61,7 @@ public class Gas implements Tile {
 		}
 		return false;
 	}
-	
+
 	public static void loadImages() {
 		try {
 

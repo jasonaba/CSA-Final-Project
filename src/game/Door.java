@@ -24,7 +24,7 @@ public class Door implements Tile {
 		isOpen = false;
 
 	}
-	
+
 	// Getters
 	@Override
 	public int getX() {
