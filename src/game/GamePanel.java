@@ -35,6 +35,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	private boolean aPressed, dPressed, leftPressed, rightPressed;
 
 	public GamePanel() {
+		SoundManager.loopMusic("assets/FB_WG_Soundtrack.wav");
 		Wall.loadImages();
 		Platform.loadImages();
 		Button.loadImages();
@@ -796,7 +797,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			// Platform Collisions
 			if (t instanceof Platform) {
 				Platform platform = (Platform) t;
-
 				platform.setState(switchIsActive);
 			}
 		}
